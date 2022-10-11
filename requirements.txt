@@ -1,0 +1,13 @@
+alembic==1.8.1
+Flask==2.2.2
+Flask-JWT-Extended==4.4.4
+flask-marshmallow==0.14.0
+Flask-Migrate==3.1.0
+Flask-RESTful==0.3.9
+Flask-SQLAlchemy==2.5.1
+Flask-Uploads==0.2.1
+marshmallow==3.17.1
+marshmallow-sqlalchemy==0.28.1
+PyJWT==2.4.0
+python-dotenv==0.20.0
+SQLAlchemy==1.4.40
