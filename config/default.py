@@ -3,7 +3,9 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DEBUG = True
-SQLALCHEMY_DATABASE_URI = "sqlite:///{}".format(os.path.join(BASE_DIR, "moneyforrabit.db"))
+SQLALCHEMY_DATABASE_URI = "sqlite:///{}".format(
+    os.path.join(BASE_DIR, "moneyforrabit.db")
+)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 PROPGATE_EXECPTIONS = True
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
