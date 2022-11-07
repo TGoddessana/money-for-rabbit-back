@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -63,8 +64,7 @@ def create_app():
     @app.route("/update-server", methods=["POST"])
     def webhook():
         if request.method == "POST":
-            from config.default import BASE_DIR
-
+            BASE_DIR = os.path.dirname(os.path.dirname(__file__))
             repo = git.Repo(BASE_DIR)
             origin = repo.remotes.origin
             origin.pull()
