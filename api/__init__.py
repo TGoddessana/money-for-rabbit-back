@@ -1,6 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
+import git
 
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
@@ -57,5 +58,16 @@ def create_app():
     api.add_resource(UserRegister, "/api/user/register")
     api.add_resource(UserLogin, "/api/user/login")
     api.add_resource(RefreshToken, "/api/user/refresh")
+
+    # for web hook ...
+    @app.route("/update_server", methods=["POST"])
+    def webhook():
+        if request.method == "POST":
+            repo = git.Repo("깃허브 레포 주소")
+            origin = repo.remotes.origin
+            origin.pull()
+            return "Pythonanywhere 서버에 성공적으로 업로드되었습니다.", 200
+        else:
+            return "유효하지 않은 이벤트 타입입니다.", 400
 
     return app
