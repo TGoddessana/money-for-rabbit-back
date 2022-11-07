@@ -68,7 +68,7 @@ def create_app():
             repo = git.Repo(BASE_DIR)
             origin = repo.remotes.origin
             origin.pull()
-            return "Pythonanywhere 서버에 성공적으로 업로드되었습니다.", 200
+            return "Pythonanywhere 서버에 성공적으로 업로드되었습니다!", 200
         else:
             return "유효하지 않은 이벤트 타입입니다.", 400
 
