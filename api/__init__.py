@@ -70,4 +70,8 @@ def create_app():
         else:
             return "유효하지 않은 이벤트 타입입니다.", 400
 
+    @app.route("/")
+    def welcome():
+        return "Pythonanywhere 과 webhook 를 이용한 자동배포 성공!"
+
     return app
