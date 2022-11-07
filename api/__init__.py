@@ -63,7 +63,9 @@ def create_app():
     @app.route("/update-server", methods=["POST"])
     def webhook():
         if request.method == "POST":
-            repo = git.Repo("깃허브 레포 주소")
+            from config.default import BASE_DIR
+
+            repo = git.Repo(BASE_DIR)
             origin = repo.remotes.origin
             origin.pull()
             return "Pythonanywhere 서버에 성공적으로 업로드되었습니다.", 200
