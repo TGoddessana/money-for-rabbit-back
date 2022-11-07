@@ -60,7 +60,7 @@ def create_app():
     api.add_resource(RefreshToken, "/api/user/refresh")
 
     # for web hook ...
-    @app.route("/update_server", methods=["POST"])
+    @app.route("/update-server", methods=["POST"])
     def webhook():
         if request.method == "POST":
             repo = git.Repo("깃허브 레포 주소")
