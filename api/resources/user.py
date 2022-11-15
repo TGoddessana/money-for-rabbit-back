@@ -99,9 +99,7 @@ class UserRegister(Resource):
         if validate_result:
             return validate_result, 400
         else:
-            if UserModel.find_by_username(data["username"]):
-                return {"Bad Request": "중복된 사용자 이름입니다."}, 400
-            elif UserModel.find_by_email(data["email"]):
+            if UserModel.find_by_email(data["email"]):
                 return {"Bad Request": "중복된 이메일입니다."}, 400
             else:
                 password = generate_password_hash(data["password"])

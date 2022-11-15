@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 import git
@@ -10,10 +10,10 @@ from flask_migrate import Migrate
 
 from marshmallow import ValidationError
 
-from api.resources.deploy import DeployServer
-
+from .resources.deploy import DeployServer
 from .resources.user import UserLogin, UserRegister, RefreshToken
-from .schemas.user import UserRegisterSchema
+from .resources.message import MessageList, MessageDetail
+
 
 from .db import db
 from .ma import ma
@@ -63,10 +63,18 @@ def create_app():
         url = [str(url) for url in urls][1:]
         return jsonify(url)
 
-    # register Resources...
+    # 유저 관련 API
     api.add_resource(UserRegister, "/api/user/register")
     api.add_resource(UserLogin, "/api/user/login")
     api.add_resource(RefreshToken, "/api/user/refresh")
+
+    # 쪽지 관련 API
+    api.add_resource(MessageList, "/api/user/<int:user_id>/messages")
+    api.add_resource(
+        MessageDetail, "/api/user/<int:user_id>/messages/<int:message_id>"
+    )
+
+    # 배포 web hook 을 위한 엔드포인트
     api.add_resource(DeployServer, "/update-server")
 
     return app

@@ -1,14 +1,18 @@
 from api.db import db
+from api.models.message import MessageModel
 
 
 class UserModel(db.Model):
     __tablename__ = "User"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False)
+    username = db.Column(db.String(20), nullable=False, unique=False)  # 중복가능
     password = db.Column(db.String(102), nullable=False)
-    email = db.Column(db.String(80), nullable=False, unique=True)
+    email = db.Column(db.String(80), nullable=False, unique=True)  # 중복불가능
     date_joined = db.Column(db.DateTime, server_default=db.func.now())
+    message_set = db.relationship(
+        "MessageModel", backref="user", passive_deletes=True, lazy="dynamic"
+    )
 
     @classmethod
     def find_by_username(cls, username):
