@@ -10,6 +10,8 @@ from flask_migrate import Migrate
 
 from marshmallow import ValidationError
 
+from api.resources.deploy import DeployServer
+
 from .resources.user import UserLogin, UserRegister, RefreshToken
 from .schemas.user import UserRegisterSchema
 
@@ -55,25 +57,26 @@ def create_app():
             401,
         )
 
+    # # for web hook ...
+    # @app.route("/update-server", methods=["POST"])
+    # def webhook():
+    #     if request.method == "POST":
+    #         BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+    #         repo = git.Repo(BASE_DIR)
+    #         origin = repo.remotes.origin
+    #         origin.pull()
+    #         return "Pythonanywhere 서버에 성공적으로 업로드되었습니다!", 200
+    #     else:
+    #         return "유효하지 않은 이벤트 타입입니다.", 400
+
+    @app.route("/")
+    def welcome():
+        return ""
+
     # register Resources...
     api.add_resource(UserRegister, "/api/user/register")
     api.add_resource(UserLogin, "/api/user/login")
     api.add_resource(RefreshToken, "/api/user/refresh")
-
-    # for web hook ...
-    @app.route("/update-server", methods=["POST"])
-    def webhook():
-        if request.method == "POST":
-            BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-            repo = git.Repo(BASE_DIR)
-            origin = repo.remotes.origin
-            origin.pull()
-            return "Pythonanywhere 서버에 성공적으로 업로드되었습니다!", 200
-        else:
-            return "유효하지 않은 이벤트 타입입니다.", 400
-
-    @app.route("/")
-    def welcome():
-        return "Pythonanywhere 과 webhook 를 이용한 자동배포 성공!"
+    api.add_resource(DeployServer, "/update-server")
 
     return app
