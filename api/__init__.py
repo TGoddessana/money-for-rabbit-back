@@ -57,21 +57,11 @@ def create_app():
             401,
         )
 
-    # # for web hook ...
-    # @app.route("/update-server", methods=["POST"])
-    # def webhook():
-    #     if request.method == "POST":
-    #         BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-    #         repo = git.Repo(BASE_DIR)
-    #         origin = repo.remotes.origin
-    #         origin.pull()
-    #         return "Pythonanywhere 서버에 성공적으로 업로드되었습니다!", 200
-    #     else:
-    #         return "유효하지 않은 이벤트 타입입니다.", 400
-
     @app.route("/")
-    def welcome():
-        return ""
+    def api_root():
+        urls = [rule for rule in app.url_map.iter_rules()]
+        url = [str(url) for url in urls][1:]
+        return jsonify(url)
 
     # register Resources...
     api.add_resource(UserRegister, "/api/user/register")
