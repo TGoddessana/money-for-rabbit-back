@@ -1,8 +1,11 @@
-import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
-import git
+
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask_apispec.extension import FlaskApiSpec
+
 
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
@@ -61,7 +64,7 @@ def create_app():
     def api_root():
         urls = [rule for rule in app.url_map.iter_rules()]
         url = [str(url) for url in urls][1:]
-        return jsonify(url)
+        return render_template("index.html")
 
     # 유저 관련 API
     api.add_resource(UserRegister, "/api/user/register")

@@ -12,6 +12,7 @@ from flask_jwt_extended import (
 from flask.views import MethodView
 from werkzeug.security import check_password_hash
 
+
 register_schema = UserRegisterSchema()
 
 
