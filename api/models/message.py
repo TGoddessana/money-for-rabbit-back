@@ -16,13 +16,36 @@ class MessageModel(db.Model):
     __tablename__ = "Message"
 
     id = db.Column(db.Integer, primary_key=True)
-    nickname = db.Column(db.String(10))  # 중복가능
-    message = db.Column(db.String(150))
-    amount = db.Column(db.Integer)
-    is_moneybag = db.Column(db.Boolean())
+    message = db.Column(db.String(150), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    is_moneybag = db.Column(db.Boolean(), nullable=False)
 
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("User.id", ondelete="CASCADE"),
         nullable=False,
     )
+
+    @classmethod
+    def find_by_id(cls, id):
+        """
+        데이터베이스에서 id 로 특정 쪽지 찾기
+        """
+        return cls.query.filter_by(id=id).first()
+
+    def save_to_db(self):
+        """
+        쪽지를 데이터베이스에 저장
+        """
+        db.session.add(self)
+        db.session.commit()
+
+    def delete_from_db(self):
+        """
+        쪽지를 데이터베이스에서 삭제
+        """
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return f"<Message Object : {self.message}>"
