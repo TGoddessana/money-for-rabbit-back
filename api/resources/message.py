@@ -29,12 +29,6 @@ class MessageDetail(Resource):
 
 
 class MessageList(Resource):
-    """
-    쪽지 목록 조회, 새로운 쪽지 추가
-
-    새로운 쪽지 추가하기 위해서는 로그인 처리 필요
-    """
-
     @classmethod
     def get(cls, user_id):
         """
@@ -76,4 +70,4 @@ class MessageList(Resource):
                 return {"Error": "저장에 실패하였습니다."}, 500
             return message_detail_schema.dump(new_message), 201
         else:
-            return {"Error": "존재하지 사용자입니다."}, 404
+            return {"Error": "존재하지 않는 사용자입니다."}, 404

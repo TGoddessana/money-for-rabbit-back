@@ -13,3 +13,4 @@ python-dotenv==0.20.0
 SQLAlchemy==1.4.40
 flask_cors
 gitpython
+pymysql
