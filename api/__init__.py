@@ -30,6 +30,9 @@ def create_app():
     ma.init_app(app)
     migrate.init_app(app, db)
 
+    def create_tables():
+        db.create_all()
+
     @app.errorhandler(ValidationError)
     def handle_marshmallow_validation(err):
         return jsonify(err.messages), 400
