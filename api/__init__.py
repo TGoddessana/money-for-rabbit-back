@@ -33,6 +33,7 @@ def create_app():
     admin = Admin(
         app,
         url="/mfr-admin/",
+        base_template="admin-home.html",
         name="money for rabbit",
         template_mode="bootstrap3",
     )
