@@ -27,6 +27,10 @@ class MessageModel(db.Model):
     )
 
     @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
+    @classmethod
     def find_by_id(cls, id):
         """
         데이터베이스에서 id 로 특정 쪽지 찾기

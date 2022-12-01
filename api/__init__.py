@@ -10,7 +10,7 @@ from marshmallow import ValidationError
 
 from .resources.deploy import DeployServer
 from .resources.user import UserLogin, UserRegister, RefreshToken
-from .resources.message import MessageList, MessageDetail
+from .resources.message import MessageList, MessageDetail, AdminMessageList
 
 
 from .db import db
@@ -75,5 +75,8 @@ def create_app():
 
     # 배포 web hook 을 위한 엔드포인트
     api.add_resource(DeployServer, "/update-server")
+
+    # 관리자를 위한 엔드포인트
+    api.add_resource(AdminMessageList, "/api/admin/messages/")
 
     return app
