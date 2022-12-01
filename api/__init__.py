@@ -1,12 +1,16 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
 from marshmallow import ValidationError
+
+from .models.user import UserModel
 
 from .resources.deploy import DeployServer
 from .resources.user import UserLogin, UserRegister, RefreshToken
@@ -22,9 +26,17 @@ def create_app():
     CORS(app, resources={r"*": {"origins": "*"}})
     load_dotenv(".env", verbose=True)
     app.config.from_envvar("APPLICATION_SETTINGS")
+
     api = Api(app)
     jwt = JWTManager(app)
     migrate = Migrate(app, db)
+    admin = Admin(
+        app,
+        url="/mfr-admin/",
+        name="money for rabbit",
+        template_mode="bootstrap3",
+    )
+    admin.add_view(ModelView(UserModel, db.session))
 
     db.init_app(app)
     ma.init_app(app)
@@ -75,8 +87,5 @@ def create_app():
 
     # 배포 web hook 을 위한 엔드포인트
     api.add_resource(DeployServer, "/update-server")
-
-    # 관리자를 위한 엔드포인트
-    api.add_resource(AdminMessageList, "/api/admin/messages/")
 
     return app
