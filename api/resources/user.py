@@ -11,7 +11,8 @@ from flask_jwt_extended import (
 )
 from flask.views import MethodView
 from werkzeug.security import check_password_hash
-
+from api.utils.confrimation import check_user, NotValidConfrimationException
+from flask import redirect
 
 register_schema = UserRegisterSchema()
 
@@ -28,24 +29,26 @@ class UserLogin(MethodView):
         user = UserModel.find_by_email(data["email"])
 
         if user and check_password_hash(user.password, data["password"]):
-            access_token = create_access_token(
-                identity=user.username, fresh=True
-            )
-            refresh_token = create_refresh_token(identity=user.username)
-            # username 에 맞는 refresh token 이 테이블에 존재하면 업데이트, 존재하지 않으면 저장
-            if user.token:
-                token = user.token[0]
-                token.refresh_token_value = refresh_token
-                token.save_to_db()
-            else:
-                new_token = RefreshTokenModel(
-                    user_id=user.id, refresh_token_value=refresh_token
+            if user.is_active:
+                access_token = create_access_token(
+                    identity=user.username, fresh=True
                 )
-                new_token.save_to_db()
-            return {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }, 200
+                refresh_token = create_refresh_token(identity=user.username)
+                # username 에 맞는 refresh token 이 테이블에 존재하면 업데이트, 존재하지 않으면 저장
+                if user.token:
+                    token = user.token[0]
+                    token.refresh_token_value = refresh_token
+                    token.save_to_db()
+                else:
+                    new_token = RefreshTokenModel(
+                        user_id=user.id, refresh_token_value=refresh_token
+                    )
+                    new_token.save_to_db()
+                return {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                }, 200
+            return {"message": "이메일 인증이 되지 않은 계정입니다."}, 400
 
         return {"unauthorized": "이메일과 비밀번호를 확인하세요."}, 401
 
@@ -84,16 +87,6 @@ class RefreshToken(MethodView):
 
 
 class UserRegister(Resource):
-    """
-    회원가입을 처리합니다.
-    username, email 은 데이터베이스에서 유일한 값이어야 하므로,
-    사용자가 데이터베이스에 존재하는 email 이나 username 으로 회원가입을 시도한다면,
-    적절한 에러 메시지와 함께 "잘못된 요청을 보냈어!" 라는 400 상태 코드를 응답합니다.
-
-    비밀번호는 데이터베이스에 직접 저장되면 안 되므로,
-    저장 시 SHA256 알고리즘을 사용하여 해싱하여 저장합니다.
-    """
-
     def post(self):
         data = request.get_json()
         validate_result = register_schema.validate(data)
@@ -112,4 +105,22 @@ class UserRegister(Resource):
                     }
                 )
             user.save_to_db()
+            user.send_email()
             return {"Success": f"{user.username} 님, 가입을 환영합니다!"}, 201
+
+
+class UserConfirm(Resource):
+    @classmethod
+    def get(cls, user_id, hashed_email):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return redirect("https://www.naver.com/")
+        if user.is_active:
+            return redirect("https://www.daum.net/")
+        try:
+            check_user(user.email, hashed_email)
+        except NotValidConfrimationException as e:
+            return redirect("lms.induk.ac.kr")
+        user.is_active = True
+        user.save_to_db()
+        return redirect("https://www.google.com/")

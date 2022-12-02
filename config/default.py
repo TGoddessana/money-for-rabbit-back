@@ -19,3 +19,11 @@ JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 RESTFUL_JSON = dict(ensure_ascii=False)
 FLASK_ADMIN_SWATCH = "journal"
+
+
+MAIL_SERVER = "smtp.gmail.com"
+MAIL_PORT = 465
+MAIL_USERNAME = "twicegoddessana1229@gmail.com"
+MAIL_PASSWORD = "zsujxtgefwrraelu"
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True

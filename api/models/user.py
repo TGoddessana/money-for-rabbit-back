@@ -1,5 +1,8 @@
+import hashlib
 from api.db import db
 from api.models.message import MessageModel
+from flask_mail import Message, Mail
+from flask import current_app, render_template
 
 
 class UserModel(db.Model):
@@ -13,6 +16,23 @@ class UserModel(db.Model):
     message_set = db.relationship(
         "MessageModel", backref="user", passive_deletes=True, lazy="dynamic"
     )
+    is_active = db.Column(db.Boolean, default=False)
+
+    def send_email(self):
+        msg = Message(
+            f"[Money For Rabbit] - {self.username} 님, 인증을 완료해 주세요.",
+            sender="twicegoddessana1229@gmail.com",
+            recipients=[self.email],
+        )
+        hashed_email = hashlib.sha256(self.email.encode()).hexdigest()
+        msg.html = render_template(
+            "confirmation_email.html",
+            hashed_email=hashed_email,
+            user_id=self.id,
+        )
+        with current_app.app_context():
+            mail = Mail()
+            mail.send(msg)
 
     @classmethod
     def find_by_username(cls, username):

@@ -13,10 +13,11 @@ from marshmallow import ValidationError
 from .models.user import UserModel, MessageModel
 
 from .resources.deploy import DeployServer
-from .resources.user import UserLogin, UserRegister, RefreshToken
-from .resources.message import MessageList, MessageDetail, AdminMessageList
+from .resources.user import UserLogin, UserRegister, RefreshToken, UserConfirm
+from .resources.message import MessageList, MessageDetail
+from .resources.index import IndexPage
 
-
+from flask_mail import Mail
 from .db import db
 from .ma import ma
 
@@ -27,6 +28,7 @@ def create_app():
     load_dotenv(".env", verbose=True)
     app.config.from_envvar("APPLICATION_SETTINGS")
 
+    mail = Mail(app)
     api = Api(app)
     jwt = JWTManager(app)
     migrate = Migrate(app, db)
@@ -70,16 +72,16 @@ def create_app():
             401,
         )
 
-    @app.route("/")
-    def api_root():
-        urls = [rule for rule in app.url_map.iter_rules()]
-        url = [str(url) for url in urls][1:]
-        return render_template("index.html")
+    # API 명세
+    api.add_resource(IndexPage, "/")
 
     # 유저 관련 API
     api.add_resource(UserRegister, "/api/user/register")
     api.add_resource(UserLogin, "/api/user/login")
     api.add_resource(RefreshToken, "/api/user/refresh")
+    api.add_resource(
+        UserConfirm, "/api/confirm-user/<int:user_id>/<string:hashed_email>"
+    )
 
     # 쪽지 관련 API
     api.add_resource(MessageList, "/api/user/<int:user_id>/messages")
