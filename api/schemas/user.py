@@ -21,6 +21,4 @@ class UserRegisterSchema(ma.SQLAlchemyAutoSchema):
             "email",
             "password",
         ]
-        dump_only = [
-            "activated",
-        ]
+        dump_only = ["activated"]

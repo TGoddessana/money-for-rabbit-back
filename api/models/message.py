@@ -1,4 +1,5 @@
 from api.db import db
+from sqlalchemy.orm import validates
 
 
 class MessageModel(db.Model):
@@ -6,7 +7,7 @@ class MessageModel(db.Model):
     money for rabit 서비스를 위한 쪽지 모델
 
     user_id = 해당 쪽지가 달려있는 유저의 id
-    nickname = 닉네임
+    author_id = 해당 쪽지를 작성한 유저의 id
     message = 쪽지의 내용
     amount = 돈의 양
     is_moneybag = 봉투 여부 (사용자는 봉투와 함게 5000원을 전달할 수도 있고,
@@ -19,12 +20,34 @@ class MessageModel(db.Model):
     message = db.Column(db.String(150), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
     is_moneybag = db.Column(db.Boolean(), nullable=False)
-
+    # 쪽지 쓴 사람
+    author_id = db.Column(
+        db.Integer,
+        db.ForeignKey("User.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    author = db.relationship(
+        "UserModel", backref="message_author", foreign_keys=author_id
+    )
+    # 쪽지 받은 사람
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("User.id", ondelete="CASCADE"),
         nullable=False,
     )
+
+    def __init__(self, **kwargs):
+        super(MessageModel, self).__init__(**kwargs)
+        MONEY_TYPES = [100, 500, 1000, 5000, 10000, 50000, 99999]
+        if self.is_moneybag == False and not self.amount in MONEY_TYPES:
+            raise ValueError("화폐단위에 벗어난 액수를 선택하려면 돈봉투를 사용하세요.")
+
+    @property
+    def money_image_name(self):
+        if self.is_moneybag:
+            return "Money_99999.png"
+        else:
+            return f"Money_{self.amount}.png"
 
     @classmethod
     def find_all(cls):

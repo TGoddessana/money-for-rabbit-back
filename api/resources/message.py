@@ -21,6 +21,9 @@ class MessageDetail(Resource):
         """
         쪽지를 특정한 다음, 해당 쪽지의 상세내용을 조회
         """
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return {"Error": "사용자를 찾을 수 없습니다."}
         message = MessageModel.find_by_id(message_id)
         if message:
             return message_detail_schema.dump(message), 200
@@ -58,12 +61,16 @@ class MessageList(Resource):
         특정 유저에게 새로운 쪽지를 생성
         """
         message_json = request.get_json()
+        user = UserModel.find_by_username(get_jwt_identity())
         if UserModel.find_by_id(user_id):
             try:
                 new_message = message_detail_schema.load(message_json)
                 new_message.user_id = user_id
+                new_message.author_id = user.id
             except ValidationError as err:
                 return err.messages, 400
+            except ValueError as err:
+                return {"Error": str(err)}, 400
             try:
                 new_message.save_to_db()
             except:

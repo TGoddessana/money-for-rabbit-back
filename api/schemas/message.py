@@ -10,10 +10,17 @@ fields.Field.default_error_messages["null"] = "해당 필드는 null 이 될 수
 
 
 class MessageSchema(ma.SQLAlchemyAutoSchema):
+    image_name = fields.Method("get_money_image_name")
+    author_name = fields.Method("get_message_author_name")
+
     class Meta:
         load_instance = True
         model = MessageModel
         # 쓰기 전용
-        load_only = [
-            "password",
-        ]
+        load_only = ["password", "author_id"]
+
+    def get_message_author_name(self, obj):
+        return obj.author.username
+
+    def get_money_image_name(self, obj):
+        return obj.money_image_name

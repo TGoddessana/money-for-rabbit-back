@@ -14,7 +14,11 @@ class UserModel(db.Model):
     email = db.Column(db.String(80), nullable=False, unique=True)  # 중복불가능
     date_joined = db.Column(db.DateTime, server_default=db.func.now())
     message_set = db.relationship(
-        "MessageModel", backref="user", passive_deletes=True, lazy="dynamic"
+        "MessageModel",
+        backref="user",
+        passive_deletes=True,
+        lazy="dynamic",
+        foreign_keys=MessageModel.user_id,
     )
     is_active = db.Column(db.Boolean, default=False)
 
