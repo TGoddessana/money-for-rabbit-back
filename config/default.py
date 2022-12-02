@@ -23,7 +23,7 @@ FLASK_ADMIN_SWATCH = "journal"
 
 MAIL_SERVER = "smtp.gmail.com"
 MAIL_PORT = 465
-MAIL_USERNAME = "twicegoddessana1229@gmail.com"
-MAIL_PASSWORD = "zsujxtgefwrraelu"
+MAIL_USERNAME = os.environ["MAIL_USERNAME"]
+MAIL_PASSWORD = os.environ["MAIL_PASSWORD"]
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
