@@ -46,7 +46,7 @@ def create_app():
     ma.init_app(app)
     migrate.init_app(app, db)
 
-    def create_tables():
+    with app.app_context():
         db.create_all()
 
     @app.errorhandler(ValidationError)
