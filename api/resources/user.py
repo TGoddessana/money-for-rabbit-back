@@ -123,4 +123,4 @@ class UserConfirm(Resource):
             return redirect("lms.induk.ac.kr")
         user.is_active = True
         user.save_to_db()
-        return redirect("https://www.google.com/")
+        return redirect("https://money-for-rabbit.netlify.app/signup/done")
