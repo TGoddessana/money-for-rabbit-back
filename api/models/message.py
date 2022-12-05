@@ -24,16 +24,18 @@ class MessageModel(db.Model):
     author_id = db.Column(
         db.Integer,
         db.ForeignKey("User.id", ondelete="CASCADE"),
-        nullable=False,
+        nullable=True,
     )
     author = db.relationship(
-        "UserModel", backref="message_author", foreign_keys=author_id
+        "UserModel",
+        backref=db.backref("recieved_messages", cascade="all, delete-orphan"),
+        foreign_keys=author_id,
     )
     # 쪽지 받은 사람
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("User.id", ondelete="CASCADE"),
-        nullable=False,
+        nullable=True,
     )
 
     def __init__(self, **kwargs):

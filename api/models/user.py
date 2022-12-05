@@ -2,16 +2,16 @@ import hashlib
 from api.db import db
 from api.models.message import MessageModel
 from flask_mail import Message, Mail
-from flask import current_app, render_template
+from flask import current_app, render_template, request, url_for
 
 
 class UserModel(db.Model):
     __tablename__ = "User"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), nullable=False, unique=False)  # 중복가능
+    username = db.Column(db.String(20), nullable=False, unique=False)
     password = db.Column(db.String(102), nullable=False)
-    email = db.Column(db.String(80), nullable=False, unique=True)  # 중복불가능
+    email = db.Column(db.String(80), nullable=False, unique=True)
     date_joined = db.Column(db.DateTime, server_default=db.func.now())
     message_set = db.relationship(
         "MessageModel",
@@ -25,12 +25,12 @@ class UserModel(db.Model):
     def send_email(self):
         msg = Message(
             f"[Money For Rabbit] - {self.username} 님, 인증을 완료해 주세요.",
-            sender="twicegoddessana1229@gmail.com",
+            sender="moneyforrabbit@5nonymous.tk",
             recipients=[self.email],
         )
         hashed_email = hashlib.sha256(self.email.encode()).hexdigest()
         msg.html = render_template(
-            "confirmation_email.html",
+            "email_template.html",
             hashed_email=hashed_email,
             user_id=self.id,
         )
@@ -84,9 +84,12 @@ class RefreshTokenModel(db.Model):
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("User.id", ondelete="CASCADE"),
-        nullable=False,
+        nullable=True,
     )
-    user = db.relationship("UserModel", backref="token")
+    user = db.relationship(
+        "UserModel",
+        backref=db.backref("token", cascade="all, delete-orphan"),
+    )
     refresh_token_value = db.Column(
         db.String(512), nullable=False, unique=True
     )
