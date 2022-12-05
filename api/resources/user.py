@@ -113,9 +113,9 @@ class UserConfirm(Resource):
     def get(cls, user_id, hashed_email):
         user = UserModel.find_by_id(user_id)
         if not user:
-            return redirect("https://www.naver.com/")
+            return redirect("https://money-for-rabbit.netlify.app/signup/fail")
         if user.is_active:
-            return redirect("https://www.daum.net/")
+            return redirect("https://money-for-rabbit.netlify.app/")
         try:
             check_user(user.email, hashed_email)
         except NotValidConfrimationException as e:
