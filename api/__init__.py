@@ -10,7 +10,7 @@ from flask_migrate import Migrate
 
 from marshmallow import ValidationError
 
-from .models.user import UserModel, MessageModel
+from .models.user import UserModel, MessageModel, RefreshTokenModel
 
 from .resources.deploy import DeployServer
 from .resources.user import UserLogin, UserRegister, RefreshToken, UserConfirm
@@ -41,6 +41,7 @@ def create_app():
     )
     admin.add_view(ModelView(UserModel, db.session))
     admin.add_view(ModelView(MessageModel, db.session))
+    admin.add_view(ModelView(RefreshTokenModel, db.session))
 
     db.init_app(app)
     ma.init_app(app)
