@@ -78,9 +78,3 @@ class MessageList(Resource):
             return message_detail_schema.dump(new_message), 201
         else:
             return {"Error": "존재하지 않는 사용자입니다."}, 404
-
-
-class AdminMessageList(Resource):
-    @classmethod
-    def get(cls):
-        return message_list_schema.dump(MessageModel.find_all())
