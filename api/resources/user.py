@@ -26,14 +26,12 @@ class UserLogin(MethodView):
     def post(self):
         data = request.get_json()
         user = UserModel.find_by_email(data["email"])
-
         if user and check_password_hash(user.password, data["password"]):
             if user.is_active:
                 access_token = create_access_token(
                     identity=user.username, fresh=True
                 )
                 refresh_token = create_refresh_token(identity=user.username)
-                # username 에 맞는 refresh token 이 테이블에 존재하면 업데이트, 존재하지 않으면 저장
                 if user.token:
                     token = user.token[0]
                     token.refresh_token_value = refresh_token
@@ -48,7 +46,6 @@ class UserLogin(MethodView):
                     "refresh_token": refresh_token,
                 }, 200
             return {"message": "이메일 인증이 되지 않은 계정입니다."}, 400
-
         return {"unauthorized": "이메일과 비밀번호를 확인하세요."}, 401
 
 
@@ -119,7 +116,7 @@ class UserConfirm(Resource):
         try:
             check_user(user.email, hashed_email)
         except NotValidConfrimationException as e:
-            return redirect("lms.induk.ac.kr")
+            return redirect("https://money-for-rabbit.netlify.app/signup/fail")
         user.is_active = True
         user.save_to_db()
         return redirect("https://money-for-rabbit.netlify.app/signup/done")
