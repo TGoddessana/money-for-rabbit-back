@@ -1,5 +1,7 @@
+import os
+
+import git
 from flask_restful import Resource
-import os, git
 
 
 class DeployServer(Resource):

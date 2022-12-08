@@ -1,25 +1,17 @@
-from api.models.user import UserModel, RefreshTokenModel
-from flask_restful import Resource, request
-from api.schemas.user import UserRegisterSchema
-from werkzeug.security import generate_password_hash
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    get_jwt_identity,
-    jwt_required,
-)
-from flask.views import MethodView
-from werkzeug.security import check_password_hash
-from api.utils.confrimation import check_user, NotValidConfrimationException
 from flask import redirect
-from api.utils.response import (
-    get_response,
-    EMAIL_NOT_CONFIRMED,
-    ACCOUNT_INFORMATION_NOT_MATCH,
-    WELCOME_NEWBIE,
-    EMAIL_DUPLICATED,
-    REFRESH_TOKEN_ERROR,
-)
+from flask.views import MethodView
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                get_jwt_identity, jwt_required)
+from flask_restful import Resource, request
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from api.models.user import RefreshTokenModel, UserModel
+from api.schemas.user import UserRegisterSchema
+from api.utils.confrimation import NotValidConfrimationException, check_user
+from api.utils.response import (ACCOUNT_INFORMATION_NOT_MATCH,
+                                EMAIL_DUPLICATED, EMAIL_NOT_CONFIRMED,
+                                REFRESH_TOKEN_ERROR, WELCOME_NEWBIE,
+                                get_response)
 
 register_schema = UserRegisterSchema()
 

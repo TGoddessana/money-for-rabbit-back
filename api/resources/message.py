@@ -1,12 +1,12 @@
-from flask_restful import Resource
 from flask import request, url_for
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from api.schemas.message import MessageSchema
-from api.models.message import MessageModel
-from api.models.user import UserModel
-from api.utils.response import get_response, NOT_FOUND, INTERNAL_SERVER_ERROR
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_restful import Resource
 from marshmallow import ValidationError
 
+from api.models.message import MessageModel
+from api.models.user import UserModel
+from api.schemas.message import MessageSchema
+from api.utils.response import INTERNAL_SERVER_ERROR, NOT_FOUND, get_response
 
 message_detail_schema = MessageSchema()
 message_list_schema = MessageSchema(many=True)

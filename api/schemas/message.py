@@ -1,6 +1,7 @@
+from marshmallow import fields
+
 from api.ma import ma
 from api.models.message import MessageModel
-from marshmallow import fields
 
 fields.Field.default_error_messages["required"] = "해당 필드를 입력해 주세요."
 fields.Field.default_error_messages[

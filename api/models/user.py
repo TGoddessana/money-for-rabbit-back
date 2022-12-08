@@ -1,8 +1,10 @@
 import hashlib
+
+from flask import current_app, render_template, request, url_for
+from flask_mail import Mail, Message
+
 from api.db import db
 from api.models.message import MessageModel
-from flask_mail import Message, Mail
-from flask import current_app, render_template, request, url_for
 
 
 class UserModel(db.Model):

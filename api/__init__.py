@@ -1,24 +1,20 @@
-from flask import Flask, jsonify, render_template
-from flask_cors import CORS
 from dotenv import load_dotenv
+from flask import Flask, jsonify, render_template
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-
-from flask_restful import Api
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
-from flask_migrate import Migrate
-
-
-from .models.user import UserModel, MessageModel, RefreshTokenModel
-
-from .resources.deploy import DeployServer
-from .resources.user import UserLogin, UserRegister, RefreshToken, UserConfirm
-from .resources.message import MessageList, MessageDetail
-from .resources.index import IndexPage
-
 from flask_mail import Mail
+from flask_migrate import Migrate
+from flask_restful import Api
+
 from .db import db
 from .ma import ma
+from .models.user import MessageModel, RefreshTokenModel, UserModel
+from .resources.deploy import DeployServer
+from .resources.index import IndexPage
+from .resources.message import MessageDetail, MessageList
+from .resources.user import RefreshToken, UserConfirm, UserLogin, UserRegister
 
 
 def create_app():

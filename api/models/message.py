@@ -1,5 +1,6 @@
-from api.db import db
 from sqlalchemy.orm import validates
+
+from api.db import db
 
 
 class MessageModel(db.Model):

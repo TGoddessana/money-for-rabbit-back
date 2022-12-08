@@ -1,9 +1,9 @@
-from api.ma import ma
-from marshmallow.fields import String
-from marshmallow import validates_schema
+from marshmallow import fields, validates_schema
 from marshmallow.exceptions import ValidationError
+from marshmallow.fields import String
+
+from api.ma import ma
 from api.models.user import UserModel
-from marshmallow import fields
 
 fields.Field.default_error_messages["required"] = "해당 필드를 입력해 주세요."
 fields.Field.default_error_messages[

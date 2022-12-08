@@ -1,5 +1,5 @@
-from flask_jwt_extended import JWTManager
 from flask import current_app, jsonify
+from flask_jwt_extended import JWTManager
 from marshmallow import ValidationError
 
 with current_app.app_context():
