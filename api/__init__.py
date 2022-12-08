@@ -8,7 +8,6 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
-from marshmallow import ValidationError
 
 from .models.user import UserModel, MessageModel, RefreshTokenModel
 
@@ -32,13 +31,7 @@ def create_app():
     api = Api(app)
     jwt = JWTManager(app)
     migrate = Migrate(app, db)
-    admin = Admin(
-        app,
-        url="/mfr-admin/",
-        base_template="admin-home.html",
-        name="money for rabbit",
-        template_mode="bootstrap3",
-    )
+    admin = Admin()
     admin.add_view(ModelView(UserModel, db.session))
     admin.add_view(ModelView(MessageModel, db.session))
     admin.add_view(ModelView(RefreshTokenModel, db.session))
@@ -49,29 +42,7 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-
-    @app.errorhandler(ValidationError)
-    def handle_marshmallow_validation(err):
-        return jsonify(err.messages), 400
-
-    @jwt.expired_token_loader
-    def expired_token_callback(jwt_header, jwt_payload):
-        return (jsonify({"error": "토큰이 만료되었습니다."}), 401)
-
-    @jwt.invalid_token_loader
-    def invalid_token_callback(error):
-        return (jsonify({"error": "잘못된 토큰입니다."}), 401)
-
-    @jwt.unauthorized_loader
-    def missing_token_callback(error):
-        return (
-            jsonify(
-                {
-                    "error": "토큰 정보가 필요합니다.",
-                }
-            ),
-            401,
-        )
+        from api.resources import error
 
     # API 명세
     api.add_resource(IndexPage, "/")
