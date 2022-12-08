@@ -1,8 +1,9 @@
 from flask_admin.contrib.sqla import ModelView
 
-from api.models.user import UserModel
+
+class UserAdminView(ModelView):
+    column_list = ("id", "username", "email", "is_active")
 
 
-class AView(ModelView):
-    def __init__(self, session, **kwargs):
-        super(AView, self).__init__(UserModel, session, **kwargs)
+class MessageAdminView(ModelView):
+    column_list = ("id", "message", "amount", "is_moneybag")

@@ -1,20 +1,23 @@
-from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS
+from dotenv import load_dotenv
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from flask_cors import CORS
-from flask_jwt_extended import JWTManager
-from flask_mail import Mail
-from flask_migrate import Migrate
-from flask_restful import Api
 
+from flask_restful import Api
+from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
+
+from .models.user import UserModel, MessageModel
+from .resources.deploy import DeployServer
+from .resources.user import UserLogin, UserRegister, RefreshToken, UserConfirm
+from .resources.message import MessageList, MessageDetail
+from .resources.index import IndexPage
+from .resources.admin import UserAdminView, MessageAdminView
+
+from flask_mail import Mail
 from .db import db
 from .ma import ma
-from .models.user import MessageModel, RefreshTokenModel, UserModel
-from .resources.deploy import DeployServer
-from .resources.index import IndexPage
-from .resources.message import MessageDetail, MessageList
-from .resources.user import RefreshToken, UserConfirm, UserLogin, UserRegister
 
 
 def create_app():
@@ -27,10 +30,13 @@ def create_app():
     api = Api(app)
     jwt = JWTManager(app)
     migrate = Migrate(app, db)
-    admin = Admin()
-    admin.add_view(ModelView(UserModel, db.session))
-    admin.add_view(ModelView(MessageModel, db.session))
-    admin.add_view(ModelView(RefreshTokenModel, db.session))
+    admin = Admin(
+        app,
+        url="/mfr-admin/",
+        base_template="admin-home.html",
+        name="money for rabbit",
+        template_mode="bootstrap3",
+    )
 
     db.init_app(app)
     ma.init_app(app)
@@ -39,6 +45,9 @@ def create_app():
     with app.app_context():
         db.create_all()
         from api.resources import error
+
+    admin.add_view(UserAdminView(UserModel, db.session))
+    admin.add_view(MessageAdminView(MessageModel, db.session))
 
     # API 명세
     api.add_resource(IndexPage, "/")
