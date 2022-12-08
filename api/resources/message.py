@@ -14,6 +14,7 @@ message_list_schema = MessageSchema(many=True)
 
 class MessageDetail(Resource):
     @classmethod
+    @jwt_required()
     def get(cls, user_id, message_id):
         """
         쪽지를 특정한 다음, 해당 쪽지의 상세내용을 조회
@@ -30,14 +31,13 @@ class MessageDetail(Resource):
 
 class MessageList(Resource):
     @classmethod
+    @jwt_required()
     def get(cls, user_id):
         """
         유저를 특정한 다음, 해당 유저가 가지고 있는 모든 쪽지들의 목록을 조회
         """
-        # 먼저 유저를 특정
         user = UserModel.find_by_id(user_id)
         if user:
-            # 해당 유저가 가지고 있는 쪽지들
             messages = user.message_set
 
             page = request.args.get("page", type=int, default=1)

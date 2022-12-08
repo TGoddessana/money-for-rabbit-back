@@ -56,18 +56,18 @@ def create_app():
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
-        return (jsonify({"Error": "토큰이 만료되었습니다."}), 401)
+        return (jsonify({"error": "토큰이 만료되었습니다."}), 401)
 
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
-        return (jsonify({"Error": "잘못된 토큰입니다."}), 401)
+        return (jsonify({"error": "잘못된 토큰입니다."}), 401)
 
     @jwt.unauthorized_loader
     def missing_token_callback(error):
         return (
             jsonify(
                 {
-                    "Error": "토큰 정보가 필요합니다.",
+                    "error": "토큰 정보가 필요합니다.",
                 }
             ),
             401,
