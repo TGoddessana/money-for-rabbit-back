@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.schemas.message import MessageSchema
 from api.models.message import MessageModel
 from api.models.user import UserModel
+from api.utils.response import get_response, NOT_FOUND, INTERNAL_SERVER_ERROR
 from marshmallow import ValidationError
 
 
@@ -12,10 +13,6 @@ message_list_schema = MessageSchema(many=True)
 
 
 class MessageDetail(Resource):
-    """
-    쪽지 상세 조회
-    """
-
     @classmethod
     def get(cls, user_id, message_id):
         """
@@ -23,23 +20,22 @@ class MessageDetail(Resource):
         """
         user = UserModel.find_by_id(user_id)
         if not user:
-            return {"Error": "사용자를 찾을 수 없습니다."}
+            return get_response(False, NOT_FOUND.format("사용자"), 404)
         message = MessageModel.find_by_id(message_id)
         if message:
             return message_detail_schema.dump(message), 200
         else:
-            return {"Error": "쪽지를 찾을 수 없습니다."}, 404
+            return get_response(False, NOT_FOUND.format("쪽지"), 404)
 
 
 class MessageList(Resource):
     @classmethod
     def get(cls, user_id):
         """
-        유저를 특정한 다음, 해당 유저가 가지고 있는 모든 쪽지들의 목록을 나타냅니다.
+        유저를 특정한 다음, 해당 유저가 가지고 있는 모든 쪽지들의 목록을 조회
         """
         # 먼저 유저를 특정
         user = UserModel.find_by_id(user_id)
-
         if user:
             # 해당 유저가 가지고 있는 쪽지들
             messages = user.message_set
@@ -52,7 +48,7 @@ class MessageList(Resource):
             result = message_list_schema.dump(pagination.items)
             return result
         else:
-            return {"Error": "존재하지 않는 사용자입니다."}, 404
+            return get_response(False, NOT_FOUND.format("사용자"), 400)
 
     @classmethod
     @jwt_required()
@@ -70,11 +66,11 @@ class MessageList(Resource):
             except ValidationError as err:
                 return err.messages, 400
             except ValueError as err:
-                return {"Error": str(err)}, 400
+                return get_response(False, str(err), 400)
             try:
                 new_message.save_to_db()
             except:
-                return {"Error": "저장에 실패하였습니다."}, 500
+                return get_response(False, INTERNAL_SERVER_ERROR, 500)
             return message_detail_schema.dump(new_message), 201
         else:
-            return {"Error": "존재하지 않는 사용자입니다."}, 404
+            return get_response(False, NOT_FOUND.format("사용자"), 400)
