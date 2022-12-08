@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
 
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
@@ -13,7 +12,7 @@ from .resources.deploy import DeployServer
 from .resources.user import UserLogin, UserRegister, RefreshToken, UserConfirm
 from .resources.message import MessageList, MessageDetail
 from .resources.index import IndexPage
-from .resources.admin import UserAdminView, MessageAdminView
+from .resources.admin import UserAdminView, MessageAdminView, HomeAdminView
 
 from flask_mail import Mail
 from .db import db
@@ -33,9 +32,10 @@ def create_app():
     admin = Admin(
         app,
         url="/mfr-admin/",
-        base_template="admin-home.html",
+        base_template="admin-default.html",
         name="money for rabbit",
         template_mode="bootstrap3",
+        index_view=HomeAdminView(url="/mfr-admin/"),
     )
 
     db.init_app(app)
@@ -46,8 +46,15 @@ def create_app():
         db.create_all()
         from api.resources import error
 
-    admin.add_view(UserAdminView(UserModel, db.session))
-    admin.add_view(MessageAdminView(MessageModel, db.session))
+    # ADMIN Page
+    admin.add_view(
+        UserAdminView(model=UserModel, session=db.session, name="Users")
+    )
+    admin.add_view(
+        MessageAdminView(
+            model=MessageModel, session=db.session, name="Messages"
+        )
+    )
 
     # API 명세
     api.add_resource(IndexPage, "/")
