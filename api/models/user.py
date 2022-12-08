@@ -38,6 +38,14 @@ class UserModel(db.Model):
             mail = Mail()
             mail.send(msg)
 
+    @property
+    def total_amount(self):
+        """
+        사용자가 받은 금액의 합계
+        """
+        money_list = [message.amount for message in self.message_set]
+        return sum(money_list)
+
     @classmethod
     def find_by_username(cls, username):
         """

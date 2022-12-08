@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import request
+from flask import request, url_for
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.schemas.message import MessageSchema
 from api.models.message import MessageModel
@@ -38,15 +38,35 @@ class MessageList(Resource):
         """
         user = UserModel.find_by_id(user_id)
         if user:
+            user.total_amount
             messages = user.message_set
-
             page = request.args.get("page", type=int, default=1)
             orderd_messages = messages.order_by(MessageModel.id.desc())
             pagination = orderd_messages.paginate(
                 page, per_page=6, error_out=False
             )
-            result = message_list_schema.dump(pagination.items)
-            return result
+
+            next = (
+                f"{request.base_url}?page={pagination.next_num}"
+                if pagination.next_num
+                else None
+            )
+            prev = (
+                f"{request.base_url}?page={pagination.prev_num}"
+                if pagination.prev_num
+                else None
+            )
+
+            return {
+                "user_info": {
+                    "username": user.username,
+                    "total_amount": user.total_amount,
+                },
+                "next": next,
+                "prev": prev,
+                "messages": message_list_schema.dump(pagination.items),
+            }
+
         else:
             return get_response(False, NOT_FOUND.format("사용자"), 400)
 
