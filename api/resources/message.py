@@ -35,9 +35,12 @@ class MessageList(Resource):
     def get(cls, user_id):
         """
         유저를 특정한 다음, 해당 유저가 가지고 있는 모든 쪽지들의 목록을 조회
+        쪽지는 요청 보낸 본인만 확인할 수 있음
         """
         user = UserModel.find_by_id(user_id)
         if user:
+            if not user.id == get_jwt_identity():
+                return get_response(False, "쪽지는 본인만 조회할 수 있습니다", 403)
             user.total_amount
             messages = user.message_set
             page = request.args.get("page", type=int, default=1)
@@ -77,7 +80,7 @@ class MessageList(Resource):
         특정 유저에게 새로운 쪽지를 생성
         """
         message_json = request.get_json()
-        user = UserModel.find_by_username(get_jwt_identity())
+        user = UserModel.find_by_id(get_jwt_identity())
         if UserModel.find_by_id(user_id):
             try:
                 new_message = message_detail_schema.load(message_json)

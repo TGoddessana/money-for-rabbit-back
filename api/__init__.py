@@ -9,7 +9,14 @@ from flask_migrate import Migrate
 
 from .models.user import UserModel, MessageModel
 from .resources.deploy import DeployServer
-from .resources.user import UserLogin, UserRegister, RefreshToken, UserConfirm
+from .resources.user import (
+    UserLogin,
+    UserRegister,
+    UserWithdraw,
+    RefreshToken,
+    UserConfirm,
+    UserInformation,
+)
 from .resources.message import MessageList, MessageDetail
 from .resources.index import IndexPage
 from .resources.admin import UserAdminView, MessageAdminView, HomeAdminView
@@ -61,7 +68,9 @@ def create_app():
 
     # 유저 관련 API
     api.add_resource(UserRegister, "/api/user/register")
+    api.add_resource(UserWithdraw, "/api/user/withdraw")
     api.add_resource(UserLogin, "/api/user/login")
+    api.add_resource(UserInformation, "/api/user/<int:user_id>")
     api.add_resource(RefreshToken, "/api/user/refresh")
     api.add_resource(
         UserConfirm, "/api/confirm-user/<int:user_id>/<string:hashed_email>"
