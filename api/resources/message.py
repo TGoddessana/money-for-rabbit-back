@@ -63,6 +63,7 @@ class MessageList(Resource):
             return {
                 "user_info": {
                     "username": user.username,
+                    "email": user.email,
                     "total_amount": user.total_amount,
                 },
                 "next": next,

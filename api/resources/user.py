@@ -28,6 +28,20 @@ register_schema = UserRegisterSchema()
 class UserInformation(Resource):
     @classmethod
     @jwt_required()
+    def get(cls, user_id):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return get_response(False, NOT_FOUND.format("사용자"), 404)
+        return {
+            "user_info": {
+                "username": user.username,
+                "email": user.email,
+                "total_amount": user.total_amount,
+            }
+        }
+
+    @classmethod
+    @jwt_required()
     def put(cls, user_id):
         data = request.get_json()
         if not data.get("username"):
@@ -56,15 +70,13 @@ class UserLogin(MethodView):
         if user and check_password_hash(user.password, data["password"]):
             if user.is_active:
                 # TOKEN 발급
-                additional_claims = {"nickname": user.username}
+
                 access_token = create_access_token(
                     identity=user.id,
                     fresh=True,
-                    additional_claims=additional_claims,
                 )
                 refresh_token = create_refresh_token(
                     identity=user.id,
-                    additional_claims=additional_claims,
                 )
                 if user.token:
                     token = user.token[0]
@@ -97,15 +109,13 @@ class RefreshToken(MethodView):
         if not user:
             return get_response(False, REFRESH_TOKEN_ERROR, 401)
         # access token, refresh token 발급
-        additional_claims = {"nickname": user.username}
+
         access_token = create_access_token(
             identity=user.id,
             fresh=True,
-            additional_claims=additional_claims,
         )
         refresh_token = create_refresh_token(
             identity=user.id,
-            additional_claims=additional_claims,
         )
         if user:
             token = user.token[0]
