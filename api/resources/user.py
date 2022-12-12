@@ -27,7 +27,7 @@ register_schema = UserRegisterSchema()
 
 class UserInformation(MethodView):
     @classmethod
-    @jwt_required()
+    # @jwt_required()
     def get(cls, user_id):
         user = UserModel.find_by_id(user_id)
         if not user:
