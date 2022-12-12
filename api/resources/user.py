@@ -25,7 +25,7 @@ from api.utils.response import (
 register_schema = UserRegisterSchema()
 
 
-class UserInformation(Resource):
+class UserInformation(MethodView):
     @classmethod
     @jwt_required()
     def get(cls, user_id):
