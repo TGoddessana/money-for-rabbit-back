@@ -14,7 +14,6 @@ message_list_schema = MessageSchema(many=True)
 
 class MessageDetail(Resource):
     @classmethod
-    @jwt_required()
     def get(cls, user_id, message_id):
         """
         쪽지를 특정한 다음, 해당 쪽지의 상세내용을 조회
