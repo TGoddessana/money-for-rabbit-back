@@ -166,12 +166,16 @@ class UserWithdraw(Resource):
     @classmethod
     @jwt_required()
     def delete(cls):
-        user = UserModel.find_by_id(get_jwt_identity())
-        if user:
+        """
+        클라이언트 -> email, password (로그인과 동일)
+        """
+        data = request.get_json()
+        user = UserModel.find_by_email(data["email"])
+        if user and check_password_hash(user.password, data["password"]):
             user.delete_from_db()
             return "", 204
         else:
-            return get_response(False, NOT_FOUND.format("사용자"), 404)
+            return get_response(False, "이메일과 비밀번호를 확인하세요.", 400)
 
 
 class UserConfirm(Resource):
