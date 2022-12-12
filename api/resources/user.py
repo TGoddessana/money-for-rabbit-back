@@ -170,12 +170,17 @@ class UserWithdraw(Resource):
         클라이언트 -> email, password (로그인과 동일)
         """
         data = request.get_json()
-        user = UserModel.find_by_email(data["email"])
-        if user and check_password_hash(user.password, data["password"]):
-            user.delete_from_db()
-            return "", 204
+        if not data.get("username"):
+            return get_response(False, "잘못된 데이터 입력입니다.", 400)
+        user = UserModel.find_by_id(get_jwt_identity())
+        if user:
+            if user.username == data["username"]:
+                user.delete_from_db()
+                return "", 204
+            else:
+                return get_response(False, "잘못된 접근입니다.", 400)
         else:
-            return get_response(False, "이메일과 비밀번호를 확인하세요.", 400)
+            return get_response(False, NOT_FOUND.format("사용자"), 400)
 
 
 class UserConfirm(Resource):
