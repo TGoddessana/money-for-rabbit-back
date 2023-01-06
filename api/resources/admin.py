@@ -41,10 +41,10 @@ class MessageAdminView(ModelView):
     ]
 
     def get_author_email(view, context, model, name):
-        return model.author.email
+        return model.author.email if model.user else None
 
     def get_reciepient_email(view, context, model, name):
-        return model.user.email
+        return model.user.email if model.user else None
 
     column_formatters = {
         "from": get_author_email,
