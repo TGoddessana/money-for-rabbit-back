@@ -1,5 +1,6 @@
 import hashlib
 
+from werkzeug.security import generate_password_hash
 from flask import current_app, render_template, request, url_for
 from flask_mail import Mail, Message
 
@@ -23,6 +24,11 @@ class UserModel(db.Model):
         foreign_keys=MessageModel.user_id,
     )
     is_active = db.Column(db.Boolean, default=False)
+
+    def create_user(self):
+        self.password = generate_password_hash(self.password)
+        self.save_to_db()
+        return self
 
     def send_email(self):
         msg = Message(
@@ -82,6 +88,13 @@ class UserModel(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
+
+    def update_user_info(self, data):
+        """
+        사용자의 닉네임을 변경
+        """
+        self.username = data
+        self.save_to_db()
 
     def __repr__(self):
         return f"<User Object : {self.username}>"

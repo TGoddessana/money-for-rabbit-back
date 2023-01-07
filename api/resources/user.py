@@ -9,8 +9,10 @@ from flask_jwt_extended import (
 from flask_restful import Resource, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from api.services.user import UserService
+
 from api.models.user import RefreshTokenModel, UserModel
-from api.schemas.user import UserRegisterSchema
+from api.schemas.user import UserRegisterSchema, UserInformationSchema
 from api.utils.confrimation import NotValidConfrimationException, check_user
 from api.utils.response import (
     ACCOUNT_INFORMATION_NOT_MATCH,
@@ -19,48 +21,37 @@ from api.utils.response import (
     EMAIL_NOT_CONFIRMED,
     REFRESH_TOKEN_ERROR,
     WELCOME_NEWBIE,
+    FORBIDDEN,
     get_response,
 )
 
 register_schema = UserRegisterSchema()
 
 
-class UserInformation(MethodView):
+class UserInformation(Resource):
     @classmethod
-    # @jwt_required()
     def get(cls, user_id):
+        """마이페이지 정보조회를 수행합니다."""
         user = UserModel.find_by_id(user_id)
         if not user:
             return get_response(False, NOT_FOUND.format("사용자"), 404)
-        return {
-            "user_info": {
-                "username": user.username,
-                "email": user.email,
-                "total_amount": user.total_amount,
-            }
-        }
+        return UserService(user).get_info()
 
     @classmethod
     @jwt_required()
     def put(cls, user_id):
+        """닉네임 변경을 수행합니다."""
+        if get_jwt_identity() != user_id:
+            return get_response(False, FORBIDDEN, 403)
         data = request.get_json()
-        if not data.get("username"):
-            return get_response(False, "적절한 데이터를 입력하세요.", 400)
-        if not user_id == get_jwt_identity():
-            return get_response(False, "본인만 정보수정이 가능합니다.", 403)
         user = UserModel.find_by_id(user_id)
-        if not user:
-            return get_response(False, NOT_FOUND.format("사용자"), 404)
-        user.username = data["username"]
-        user.save_to_db()
-        return get_response(True, f"닉네임이 {user.username} 으로 변경되었습니다.", 200)
+        return UserService(user).update_info(data)
 
 
 class UserLogin(MethodView):
     """
-    로그인을 처리합니다.
-    로그인 시, 무조건 새로운 refresh token 을 발급하고,
-    그것을 데이터베이스에 저장합니다.
+    Access Token, Refresh Token 을 발급하고,
+    Refresh Token Rotation 을 수행합니다.
     """
 
     @classmethod
@@ -128,33 +119,12 @@ class RefreshToken(MethodView):
 
 
 class UserRegister(Resource):
-    """
-    회원가입을 처리합니다.
-    """
+    """회원가입을 처리합니다."""
 
     @classmethod
     def post(cls):
         data = request.get_json()
-        validate_result = register_schema.validate(data)
-        if validate_result:
-            return validate_result, 400
-        else:
-            if UserModel.find_by_email(data["email"]):
-                return get_response(False, EMAIL_DUPLICATED, 400)
-            else:
-                password = generate_password_hash(data["password"])
-                user = register_schema.load(
-                    {
-                        "username": data["username"],
-                        "email": data["email"],
-                        "password": password,
-                    }
-                )
-            user.save_to_db()
-            user.send_email()
-            return get_response(
-                True, WELCOME_NEWBIE.format(user.username), 201
-            )
+        return UserService().register(data)
 
 
 class UserWithdraw(Resource):

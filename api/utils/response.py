@@ -8,6 +8,7 @@ EMAIL_NOT_CONFIRMED = "이메일 인증이 되지 않은 계정입니다."
 ACCOUNT_INFORMATION_NOT_MATCH = "이메일과 비밀번호를 확인하세요."
 EMAIL_DUPLICATED = "중복된 이메일입니다."
 REFRESH_TOKEN_ERROR = "refresh token 은 2회 이상 사용될 수 없습니다."
+FORBIDDEN = "권한이 없습니다."
 
 
 def get_response(status: bool, message: str, status_code: int) -> tuple:
