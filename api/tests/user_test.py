@@ -11,7 +11,10 @@ class MyPageTest(CommonTestCaseSetting):
         super().setUp()
         with self.client.application.app_context():
             UserModel(
-                username="미미", password="1234", email="meme@naver.com", is_active=True,
+                username="미미",
+                password="1234",
+                email="meme@naver.com",
+                is_active=True,
             ).save_to_db()
             # 테스트를 위한 사용자 "미미" 생성, id = 1
             UserModel(
@@ -27,7 +30,7 @@ class MyPageTest(CommonTestCaseSetting):
         """
         response = self.client.get(self.url + "/api/user/3")
         self.assertEqual(404, response.status_code)
-        self.assertEqual(response.get_json(), {'error': '사용자를 찾을 수 없습니다.'})
+        self.assertEqual(response.get_json(), {"error": "사용자를 찾을 수 없습니다."})
 
     def test_get_exist_user_information_should_200(self):
         """
@@ -35,8 +38,9 @@ class MyPageTest(CommonTestCaseSetting):
         """
         response = self.client.get(self.url + "/api/user/1")  # 미미
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.get_json(),
-                         {"user_info": {"total_amount": 0, "username": "미미"}})
+        self.assertEqual(
+            response.get_json(), {"user_info": {"total_amount": 0, "username": "미미"}}
+        )
 
     def test_put_user_information_should_403(self):
         """
@@ -98,7 +102,7 @@ class RegisterTest(CommonTestCaseSetting):
             }
         )
         response = self.client.post(
-            "http://127.0.0.1:5000/api/user/register",
+            self.url + "/api/user/register",
             content_type="application/json",
             data=data_from_client,
         )
@@ -117,7 +121,7 @@ class RegisterTest(CommonTestCaseSetting):
             }
         )
         response = self.client.post(
-            "http://127.0.0.1:5000/api/user/register",
+            self.url + "/api/user/register",
             content_type="application/json",
             data=data_from_client,
         )
@@ -125,6 +129,7 @@ class RegisterTest(CommonTestCaseSetting):
         self.assertEqual(response.get_json(), {"error": "유효한 비밀번호 값이 아닙니다."})
 
     def test_valid_register_should_201(self):
+
         """
         정상적인 데이터와 함께 회원가입이 진행되었다면,
         서버는 사용자에게 확인 이메일을 보내고
@@ -140,10 +145,11 @@ class RegisterTest(CommonTestCaseSetting):
                 }
             )
             response = self.client.post(
-                "http://127.0.0.1:5000/api/user/register",
+                self.url + "/api/user/register",
                 content_type="application/json",
                 data=data_from_client,
             )
-            print(response.text)
-            # self.assertEqual(400, response.status_code)
-            # self.assertEqual(response.get_json(), {"error": "유효한 비밀번호 값이 아닙니다."})
+            self.assertEqual(201, response.status_code)
+            self.assertEqual(
+                response.get_json(), {"success": "some_username 님, 회원가입을 환영합니다!"}
+            )

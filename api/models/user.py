@@ -113,9 +113,7 @@ class RefreshTokenModel(db.Model):
         "UserModel",
         backref=db.backref("token", cascade="all, delete-orphan"),
     )
-    refresh_token_value = db.Column(
-        db.String(512), nullable=False, unique=True
-    )
+    refresh_token_value = db.Column(db.String(512), nullable=False, unique=True)
 
     def save_to_db(self):
         """
@@ -137,9 +135,7 @@ class RefreshTokenModel(db.Model):
         리프레시 토큰 값으로 user 객체를 얻어옴
         """
         try:
-            user_id = (
-                cls.query.filter_by(refresh_token_value=token).first().user_id
-            )
+            user_id = cls.query.filter_by(refresh_token_value=token).first().user_id
         except AttributeError:
             return None
         user = UserModel.find_by_id(id=user_id)

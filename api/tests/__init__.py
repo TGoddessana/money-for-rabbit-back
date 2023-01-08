@@ -1,17 +1,19 @@
 import unittest
 from api.db import db
-from app import app
+from app import create_app
 from flask import current_app
+
+app = create_app(is_production=False)
 
 
 class CommonTestCaseSetting(unittest.TestCase):
     def setUp(self):
         self.url = "http://127.0.0.1:5000"
         self.client = app.test_client()
-        self.client.application.config.from_object("config.test")
         with self.client.application.app_context():
             import warnings
-            warnings.simplefilter('ignore', category=DeprecationWarning)
+
+            warnings.simplefilter("ignore", category=DeprecationWarning)
             db.create_all()
 
     def tearDown(self):

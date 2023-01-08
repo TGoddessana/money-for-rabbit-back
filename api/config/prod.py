@@ -1,4 +1,6 @@
-from config.default import *
+from api.config.default import *
+
+DEBUG = False
 
 DB_USERNAME = os.getenv("DB_USERNAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")

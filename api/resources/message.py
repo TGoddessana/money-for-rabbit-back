@@ -44,9 +44,7 @@ class MessageList(Resource):
             messages = user.message_set
             page = request.args.get("page", type=int, default=1)
             orderd_messages = messages.order_by(MessageModel.id.desc())
-            pagination = orderd_messages.paginate(
-                page, per_page=6, error_out=False
-            )
+            pagination = orderd_messages.paginate(page, per_page=6, error_out=False)
 
             next = (
                 f"{request.base_url}?page={pagination.next_num}"

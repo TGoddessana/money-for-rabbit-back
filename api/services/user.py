@@ -1,7 +1,11 @@
 from api.schemas.user import UserInformationSchema, UserRegisterSchema
 from api.utils.response import get_response
 from api.utils.response import EMAIL_DUPLICATED, WELCOME_NEWBIE
-from api.utils.validation import validate_password, validate_email, NotValidDataException
+from api.utils.validation import (
+    validate_password,
+    validate_email,
+    NotValidDataException,
+)
 from api.models.user import UserModel
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -20,9 +24,7 @@ class UserService:
         self.user = user
 
     def get_info(self):
-        return {
-            "user_info": UserInformationSchema().dump(self.user)
-        }
+        return {"user_info": UserInformationSchema().dump(self.user)}
 
     def update_info(self, data):
         validate_result = UserInformationSchema().validate(data)
@@ -56,9 +58,10 @@ class UserService:
             )
         user.save_to_db()
         user.send_email()
-        return get_response(
-            True, WELCOME_NEWBIE.format(user.username), 201
-        )
+        return get_response(True, WELCOME_NEWBIE.format(user.username), 201)
 
     def withdraw(self):
+        pass
+
+    def login(self, refresh: bool):
         pass

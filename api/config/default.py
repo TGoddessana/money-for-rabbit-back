@@ -20,7 +20,6 @@ JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 RESTFUL_JSON = dict(ensure_ascii=False)
 FLASK_ADMIN_SWATCH = "journal"
 
-
 MAIL_SERVER = "smtp.gmail.com"
 MAIL_PORT = 465
 MAIL_USERNAME = os.environ["MAIL_USERNAME"]

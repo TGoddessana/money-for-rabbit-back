@@ -25,12 +25,18 @@ from flask_mail import Mail
 from .db import db
 from .ma import ma
 
+import os
 
-def create_app():
+
+def create_app(is_production=True):
     app = Flask(__name__)
     CORS(app, resources={r"*": {"origins": "*"}})
     load_dotenv(".env", verbose=True)
-    app.config.from_envvar("APPLICATION_SETTINGS")
+    if is_production:
+        config = os.getenv("APPLICATION_SETTINGS_PROD")
+    else:
+        config = os.getenv("APPLICATION_SETTINGS_TEST")
+    app.config.from_object(config)
 
     mail = Mail(app)
     api = Api(app)
@@ -54,13 +60,9 @@ def create_app():
         from api.resources import error
 
     # ADMIN Page
+    admin.add_view(UserAdminView(model=UserModel, session=db.session, name="Users"))
     admin.add_view(
-        UserAdminView(model=UserModel, session=db.session, name="Users")
-    )
-    admin.add_view(
-        MessageAdminView(
-            model=MessageModel, session=db.session, name="Messages"
-        )
+        MessageAdminView(model=MessageModel, session=db.session, name="Messages")
     )
 
     # API 명세
@@ -78,9 +80,7 @@ def create_app():
 
     # 쪽지 관련 API
     api.add_resource(MessageList, "/api/user/<int:user_id>/messages")
-    api.add_resource(
-        MessageDetail, "/api/user/<int:user_id>/messages/<int:message_id>"
-    )
+    api.add_resource(MessageDetail, "/api/user/<int:user_id>/messages/<int:message_id>")
 
     # 배포 web hook 을 위한 엔드포인트
     api.add_resource(DeployServer, "/update-server")
