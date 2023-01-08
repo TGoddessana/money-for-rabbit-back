@@ -3,7 +3,7 @@ from flask_jwt_extended import create_refresh_token, create_access_token
 
 def create_username_access_token(user):
     return create_access_token(
-        additional_claims=user.username,
+        additional_claims={"username": user.username},
         identity=user.id,
         fresh=True,
     )
