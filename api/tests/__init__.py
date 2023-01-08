@@ -1,7 +1,6 @@
 import unittest
 from api.db import db
-from app import create_app
-from flask import current_app
+from api import create_app
 
 app = create_app(is_production=False)
 
