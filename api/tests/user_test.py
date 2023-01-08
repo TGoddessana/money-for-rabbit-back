@@ -4,6 +4,28 @@ import json
 from flask_jwt_extended import create_access_token
 
 
+class LoginTest(CommonTestCaseSetting):
+    """access, refresh token 발행 및 refresh token rotation 을 테스트합니다."""
+
+    def setUp(self):
+        super().setUp()
+        with self.client.application.app_context():
+            UserModel(
+                username="미미",
+                password="1234",
+                email="meme@naver.com",
+                is_active=True,
+            ).save_to_db()
+            # 테스트를 위한 사용자 "미미" 생성, id = 1
+            UserModel(
+                username="민수", password="1234", email="minsu@naver.com", is_active=True
+            ).save_to_db()
+            # 테스트를 위한 사용자 "민수" 생성, id = 2
+
+    def test_not_matching_information_login_should_401(self):
+        pass
+
+
 class MyPageTest(CommonTestCaseSetting):
     """사용자 정보조회 및 수정을 테스트합니다."""
 

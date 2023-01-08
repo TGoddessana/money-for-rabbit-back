@@ -35,3 +35,16 @@ class UserRegisterSchema(ma.SQLAlchemyAutoSchema):
             "password",
         ]
         dump_only = ["activated"]
+
+
+class UserLoginSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        load_instance = True
+        model = UserModel
+        load_only = ["email", "password"]
+        exclude = [
+            "id",
+            "username",
+            "is_active",
+            "date_joined",
+        ]

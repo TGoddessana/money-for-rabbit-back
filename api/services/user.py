@@ -1,13 +1,20 @@
-from api.schemas.user import UserInformationSchema, UserRegisterSchema
-from api.utils.response import get_response
+from api.schemas.user import UserInformationSchema, UserRegisterSchema, UserLoginSchema
+from api.utils.auth import create_username_access_token, create_userid_refresh_token
+from api.utils.response import (
+    get_response,
+    EMAIL_NOT_CONFIRMED,
+    ACCOUNT_INFORMATION_NOT_MATCH,
+)
 from api.utils.response import EMAIL_DUPLICATED, WELCOME_NEWBIE
 from api.utils.validation import (
     validate_password,
     validate_email,
     NotValidDataException,
 )
-from api.models.user import UserModel
+from api.models.user import UserModel, RefreshTokenModel
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 
 class UserService:
@@ -63,5 +70,26 @@ class UserService:
     def withdraw(self):
         pass
 
-    def login(self, refresh: bool):
-        pass
+    def login(self, data):
+        validate_result = UserLoginSchema().validate(data)
+        if validate_result:
+            return validate_result, 400
+        if not check_password_hash(self.user.password, data["password"]):
+            return get_response(False, ACCOUNT_INFORMATION_NOT_MATCH, 401)
+        if not self.user.is_active:
+            return get_response(False, EMAIL_NOT_CONFIRMED, 400)
+        new_access_token = create_username_access_token(self.user)
+        new_refresh_token = create_userid_refresh_token(self.user)
+        if self.user.token:
+            token = self.user.token[0]
+            token.refresh_token_value = new_refresh_token
+            token.save_to_db()
+        else:
+            new_token = RefreshTokenModel(
+                user_id=self.user.id, refresh_token_value=new_refresh_token
+            )
+            new_token.save_to_db()
+        return {
+            "access_token": new_access_token,
+            "refresh_token": new_refresh_token,
+        }, 200

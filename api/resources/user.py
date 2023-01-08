@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     jwt_required,
 )
 from flask_restful import Resource, request
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 from api.services.user import UserService
 
@@ -58,32 +58,32 @@ class UserLogin(MethodView):
     def post(cls):
         data = request.get_json()
         user = UserModel.find_by_email(data["email"])
-        if user and check_password_hash(user.password, data["password"]):
-            if user.is_active:
-                # TOKEN 발급
-
-                access_token = create_access_token(
-                    identity=user.id,
-                    fresh=True,
-                )
-                refresh_token = create_refresh_token(
-                    identity=user.id,
-                )
-                if user.token:
-                    token = user.token[0]
-                    token.refresh_token_value = refresh_token
-                    token.save_to_db()
-                else:
-                    new_token = RefreshTokenModel(
-                        user_id=user.id, refresh_token_value=refresh_token
-                    )
-                    new_token.save_to_db()
-                return {
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
-                }, 200
-            return get_response(False, EMAIL_NOT_CONFIRMED, 400)
-        return get_response(False, ACCOUNT_INFORMATION_NOT_MATCH, 401)
+        if not user:
+            return get_response(False, NOT_FOUND.format("사용자"), 404)
+        return UserService(user).login(data)
+        # if user and check_password_hash(user.password, data["password"]):
+        #     if user.is_active:
+        #         # TOKEN 발급
+        #
+        #         access_token = create_username_access_token
+        #         refresh_token = create_refresh_token(
+        #             identity=user.id,
+        #         )
+        #         if user.token:
+        #             token = user.token[0]
+        #             token.refresh_token_value = refresh_token
+        #             token.save_to_db()
+        #         else:
+        #             new_token = RefreshTokenModel(
+        #                 user_id=user.id, refresh_token_value=refresh_token
+        #             )
+        #             new_token.save_to_db()
+        #         return {
+        #             "access_token": access_token,
+        #             "refresh_token": refresh_token,
+        #         }, 200
+        #     return get_response(False, EMAIL_NOT_CONFIRMED, 400)
+        # return get_response(False, ACCOUNT_INFORMATION_NOT_MATCH, 401)
 
 
 class RefreshToken(MethodView):
