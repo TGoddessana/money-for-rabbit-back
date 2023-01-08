@@ -7,25 +7,17 @@ from flask_jwt_extended import (
     jwt_required,
 )
 from flask_restful import Resource, request
-from werkzeug.security import check_password_hash
 
 from api.services.user import UserService
 
 from api.models.user import RefreshTokenModel, UserModel
-from api.schemas.user import UserRegisterSchema, UserInformationSchema
 from api.utils.confrimation import NotValidConfrimationException, check_user
 from api.utils.response import (
-    ACCOUNT_INFORMATION_NOT_MATCH,
     NOT_FOUND,
-    EMAIL_DUPLICATED,
-    EMAIL_NOT_CONFIRMED,
     REFRESH_TOKEN_ERROR,
-    WELCOME_NEWBIE,
     FORBIDDEN,
     get_response,
 )
-
-register_schema = UserRegisterSchema()
 
 
 class UserInformation(Resource):
@@ -71,28 +63,12 @@ class RefreshToken(MethodView):
     @classmethod
     @jwt_required(refresh=True)
     def post(cls):
-        identity = get_jwt_identity()
-        token = dict(request.headers)["Authorization"][7:]
-        user = RefreshTokenModel.get_user_by_token(token)
+        user = RefreshTokenModel.get_user_by_token(
+            dict(request.headers)["Authorization"][7:]
+        )
         if not user:
             return get_response(False, REFRESH_TOKEN_ERROR, 401)
-        # access token, refresh token 발급
-
-        access_token = create_access_token(
-            identity=user.id,
-            fresh=True,
-        )
-        refresh_token = create_refresh_token(
-            identity=user.id,
-        )
-        if user:
-            token = user.token[0]
-            token.refresh_token_value = refresh_token
-            token.save_to_db()
-            return {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }, 200
+        return UserService(user).refresh_login()
 
 
 class UserRegister(Resource):
@@ -117,17 +93,10 @@ class UserWithdraw(Resource):
         클라이언트 -> email, password (로그인과 동일)
         """
         data = request.get_json()
-        if not data.get("username"):
-            return get_response(False, "잘못된 데이터 입력입니다.", 400)
         user = UserModel.find_by_id(get_jwt_identity())
-        if user:
-            if user.username == data["username"]:
-                user.delete_from_db()
-                return "", 204
-            else:
-                return get_response(False, "잘못된 접근입니다.", 400)
-        else:
-            return get_response(False, NOT_FOUND.format("사용자"), 400)
+        if not user:
+            return get_response(False, NOT_FOUND.format("사용자"), 404)
+        return UserService(user).withdraw(data)
 
 
 class UserConfirm(Resource):

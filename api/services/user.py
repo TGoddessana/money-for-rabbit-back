@@ -1,4 +1,9 @@
-from api.schemas.user import UserInformationSchema, UserRegisterSchema, UserLoginSchema
+from api.schemas.user import (
+    UserInformationSchema,
+    UserRegisterSchema,
+    UserLoginSchema,
+    UserWithdrawSchema,
+)
 from api.utils.auth import create_username_access_token, create_userid_refresh_token
 from api.utils.response import (
     get_response,
@@ -67,8 +72,15 @@ class UserService:
         user.send_email()
         return get_response(True, WELCOME_NEWBIE.format(user.username), 201)
 
-    def withdraw(self):
-        pass
+    def withdraw(self, data):
+        validate_result = UserWithdrawSchema().validate(data)
+        if validate_result:
+            return validate_result, 400
+        if self.user.username == data["username"]:
+            self.user.delete_from_db()
+            return "", 204
+        else:
+            return get_response(False, "잘못된 접근입니다.", 400)
 
     def login(self, data):
         validate_result = UserLoginSchema().validate(data)
@@ -89,6 +101,17 @@ class UserService:
                 user_id=self.user.id, refresh_token_value=new_refresh_token
             )
             new_token.save_to_db()
+        return {
+            "access_token": new_access_token,
+            "refresh_token": new_refresh_token,
+        }, 200
+
+    def refresh_login(self):
+        new_access_token = create_username_access_token(self.user)
+        new_refresh_token = create_userid_refresh_token(self.user)
+        token = self.user.token[0]
+        token.refresh_token_value = new_refresh_token
+        token.save_to_db()
         return {
             "access_token": new_access_token,
             "refresh_token": new_refresh_token,
