@@ -1,5 +1,4 @@
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import AdminIndexView
 from flask_admin import expose, AdminIndexView
 from api.models.user import UserModel
 from api.models.message import MessageModel
