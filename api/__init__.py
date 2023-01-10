@@ -18,7 +18,6 @@ from .resources.user import (
     UserInformation,
 )
 from .resources.message import MessageList, MessageDetail
-from .resources.index import IndexPage
 from .resources.admin import UserAdminView, MessageAdminView, HomeAdminView
 
 from flask_mail import Mail
@@ -64,9 +63,6 @@ def create_app(is_production=True):
     admin.add_view(
         MessageAdminView(model=MessageModel, session=db.session, name="Messages")
     )
-
-    # API 명세
-    api.add_resource(IndexPage, "/")
 
     # 유저 관련 API
     api.add_resource(UserRegister, "/api/user/register")
