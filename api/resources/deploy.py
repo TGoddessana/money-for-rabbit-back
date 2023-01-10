@@ -11,4 +11,7 @@ class DeployServer(Resource):
         repo = git.Repo(BASE_DIR, search_parent_directories=True)
         origin = repo.remotes.origin
         origin.pull()
+        os.system("flask db migrate")
+        os.system("flask db upgrade")
+        os.system("pip install -r requirements.txt")
         return "", 204
