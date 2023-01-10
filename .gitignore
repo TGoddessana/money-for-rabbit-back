@@ -15,4 +15,3 @@ node_modules/
 .eslintrc.js
 .idea
 dev_app.py
-dashboard_config.cfg
