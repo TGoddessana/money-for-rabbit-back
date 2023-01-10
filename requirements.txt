@@ -16,3 +16,4 @@ gitpython
 pymysql
 flask-admin
 Flask-Mail
+flask_monitoringdashboard

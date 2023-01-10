@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask_admin import Admin
-
+import flask_monitoringdashboard as dashboard
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -49,10 +49,12 @@ def create_app(is_production=True):
         template_mode="bootstrap3",
         index_view=HomeAdminView(url="/mfr-admin/"),
     )
+    dashboard.config.init_from(envvar="DASHBOARD_CONFIG")
 
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
+    dashboard.bind(app)
 
     with app.app_context():
         db.create_all()

@@ -14,4 +14,5 @@ frontend/assets/img
 node_modules/
 .eslintrc.js
 .idea
-dev_app.py
+./dev_app.py
+dashboard_config.cfg
