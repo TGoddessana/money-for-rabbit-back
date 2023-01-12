@@ -38,7 +38,7 @@ class UserModel(db.Model):
         )
         hashed_email = hashlib.sha256(self.email.encode()).hexdigest()
         msg.html = render_template(
-            "email_template.html",
+            "email-template.html",
             hashed_email=hashed_email,
             user_id=self.id,
         )
