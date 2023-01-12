@@ -29,7 +29,7 @@ class MessageModel(db.Model):
     )
     author = db.relationship(
         "UserModel",
-        backref=db.backref("recieved_messages", cascade="all, delete-orphan"),
+        backref=db.backref("received_messages", cascade="all, delete-orphan"),
         foreign_keys=author_id,
     )
     # 쪽지 받은 사람
