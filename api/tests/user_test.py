@@ -172,7 +172,7 @@ class RegisterTest(CommonTestCaseSetting):
             data=data_from_client,
         )
         self.assertEqual(400, response.status_code)
-        self.assertEqual(response.get_json(), {"error": "유효한 이메일 값이 아닙니다."})
+        self.assertIn("유효한 이메일 값이 아닙니다.", response.get_json()["error"])
 
     def test_invalid_password_data_should_400(self):
         """
@@ -191,7 +191,7 @@ class RegisterTest(CommonTestCaseSetting):
             data=data_from_client,
         )
         self.assertEqual(400, response.status_code)
-        self.assertEqual(response.get_json(), {"error": "유효한 비밀번호 값이 아닙니다."})
+        self.assertIn("유효한 비밀번호 값이 아닙니다.", response.get_json()["error"])
 
     def test_valid_register_should_201(self):
 
