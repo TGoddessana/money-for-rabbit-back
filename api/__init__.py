@@ -6,6 +6,8 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
+
+from cli import create_admin_user
 from .models.user import UserModel, MessageModel
 from .resources.deploy import DeployServer
 from .resources.user import (
@@ -17,7 +19,12 @@ from .resources.user import (
     UserInformation,
 )
 from .resources.message import MessageList, MessageDetail
-from .resources.admin import UserAdminView, MessageAdminView, HomeAdminView
+from .resources.admin import (
+    UserAdminView,
+    MessageAdminView,
+    HomeAdminView,
+    AdminLoginView,
+)
 
 from flask_mail import Mail
 from .db import db
@@ -36,6 +43,7 @@ def create_app(is_production=True):
         config = os.getenv("APPLICATION_SETTINGS_TEST")
     app.config.from_object(config)
 
+    app.cli.add_command(create_admin_user)
     mail = Mail(app)
     api = Api(app)
     jwt = JWTManager(app)
@@ -43,7 +51,7 @@ def create_app(is_production=True):
     admin = Admin(
         app,
         url="/mfr-admin/",
-        base_template="admin-default.html",
+        base_template="admin-base.html",
         name="money for rabbit",
         template_mode="bootstrap3",
         index_view=HomeAdminView(url="/mfr-admin/"),
@@ -72,6 +80,7 @@ def create_app(is_production=True):
     api.add_resource(
         UserConfirm, "/api/confirm-user/<int:user_id>/<string:hashed_email>"
     )
+    api.add_resource(AdminLoginView, "/mfr-admin/login")
 
     # 쪽지 관련 API
     api.add_resource(MessageList, "/api/user/<int:user_id>/messages")
