@@ -1,5 +1,6 @@
 import hashlib
 
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
 from flask import current_app, render_template, request, url_for
 from flask_mail import Mail, Message
@@ -8,7 +9,7 @@ from api.db import db
 from api.models.message import MessageModel
 
 
-class UserModel(db.Model):
+class UserModel(db.Model, UserMixin):
     __tablename__ = "User"
 
     id = db.Column(db.Integer, primary_key=True)
