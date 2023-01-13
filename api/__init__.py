@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask_admin import Admin
+from flask_login import LoginManager
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -44,6 +45,8 @@ def create_app(is_production=True):
     app.config.from_object(config)
 
     app.cli.add_command(create_admin_user)
+
+    login_manager = LoginManager()
     mail = Mail(app)
     api = Api(app)
     jwt = JWTManager(app)
@@ -57,6 +60,7 @@ def create_app(is_production=True):
         index_view=HomeAdminView(url="/mfr-admin/"),
     )
 
+    login_manager.init_app(app)
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
@@ -65,11 +69,16 @@ def create_app(is_production=True):
         db.create_all()
         from api.resources import error
 
+    @login_manager.user_loader
+    def load_user(user_id):
+        return UserModel.get(user_id)
+
     # ADMIN Page
     admin.add_view(UserAdminView(model=UserModel, session=db.session, name="Users"))
     admin.add_view(
         MessageAdminView(model=MessageModel, session=db.session, name="Messages")
     )
+    api.add_resource(AdminLoginView, "/mfr-admin/login")
 
     # 유저 관련 API
     api.add_resource(UserRegister, "/api/user/register")
@@ -80,7 +89,6 @@ def create_app(is_production=True):
     api.add_resource(
         UserConfirm, "/api/confirm-user/<int:user_id>/<string:hashed_email>"
     )
-    api.add_resource(AdminLoginView, "/mfr-admin/login")
 
     # 쪽지 관련 API
     api.add_resource(MessageList, "/api/user/<int:user_id>/messages")
