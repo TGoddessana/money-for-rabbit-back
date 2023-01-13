@@ -48,7 +48,7 @@ class UserService:
     def register(self, data):
         validate_result = UserRegisterSchema().validate(data)
         if validate_result:
-            return validate_result, 400
+            return get_response(False, validate_result, 400)
         try:
             validate_password(data.get("password"))
         except NotValidDataException as e:
@@ -75,7 +75,7 @@ class UserService:
     def withdraw(self, data):
         validate_result = UserWithdrawSchema().validate(data)
         if validate_result:
-            return validate_result, 400
+            return get_response(False, validate_result, 400)
         if self.user.username == data["username"]:
             self.user.delete_from_db()
             return "", 204
@@ -85,7 +85,7 @@ class UserService:
     def login(self, data):
         validate_result = UserLoginSchema().validate(data)
         if validate_result:
-            return validate_result, 400
+            return get_response(False, validate_result, 400)
         if not check_password_hash(self.user.password, data["password"]):
             return get_response(False, ACCOUNT_INFORMATION_NOT_MATCH, 401)
         if not self.user.is_active:
