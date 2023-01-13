@@ -19,6 +19,7 @@ class UserInformationSchema(ma.SQLAlchemyAutoSchema):
             "password",
             "is_active",
             "date_joined",
+            "is_admin",
         ]
 
     def get_total_amount(self, obj):
