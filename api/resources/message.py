@@ -40,7 +40,6 @@ class MessageList(Resource):
         if user:
             if not user.id == get_jwt_identity():
                 return get_response(False, "쪽지는 본인만 조회할 수 있습니다", 403)
-            user.total_amount
             messages = user.message_set
             page = request.args.get("page", type=int, default=1)
             orderd_messages = messages.order_by(MessageModel.id.desc())
@@ -63,6 +62,7 @@ class MessageList(Resource):
                     "email": user.email,
                     "total_amount": user.total_amount,
                 },
+                "message_set_count": user.message_set_count,
                 "next": next,
                 "prev": prev,
                 "messages": message_list_schema.dump(pagination.items),

@@ -56,6 +56,13 @@ class UserModel(db.Model, UserMixin):
         money_list = [message.amount for message in self.message_set]
         return sum(money_list)
 
+    @property
+    def message_set_count(self):
+        """
+        사용자가 받은 메시지 개수
+        """
+        return len(self.message_set.all())
+
     @classmethod
     def find_by_username(cls, username):
         """
