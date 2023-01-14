@@ -12,8 +12,8 @@ class NotValidDataException(Exception):
 
 def validate_password(password):
     """12 ~ 16자, 대문자 1개, 소문자 1개, 숫자 1개 및 특수 문자 1개"""
-    regex = r"(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[{}])[A-Za-z0-9{}]{{12,16}}".format(
-        re.escape(string.punctuation), re.escape(string.punctuation)
+    regex = re.compile(
+        r"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{12,16}$"
     )
     if re.search(regex, password):
         pass
