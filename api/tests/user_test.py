@@ -1,8 +1,11 @@
-from . import CommonTestCaseSetting
+import json
+
+from flask_jwt_extended import create_access_token, decode_token
+
 from api.models.user import UserModel
 from api.utils.auth import create_username_access_token
-import json
-from flask_jwt_extended import create_access_token, decode_token
+
+from . import CommonTestCaseSetting
 
 
 class MyPageTest(CommonTestCaseSetting):

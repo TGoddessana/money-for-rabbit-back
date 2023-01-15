@@ -1,6 +1,7 @@
 import unittest
-from api.db import db
+
 from api import create_app
+from api.db import db
 
 app = create_app(is_production=False)
 

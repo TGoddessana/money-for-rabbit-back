@@ -1,9 +1,9 @@
 import hashlib
 
-from flask_login import UserMixin
-from werkzeug.security import generate_password_hash
 from flask import current_app, render_template, request, url_for
+from flask_login import UserMixin
 from flask_mail import Mail, Message
+from werkzeug.security import generate_password_hash
 
 from api.db import db
 from api.models.message import MessageModel

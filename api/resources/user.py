@@ -1,23 +1,13 @@
 from flask import redirect
 from flask.views import MethodView
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    get_jwt_identity,
-    jwt_required,
-)
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_restful import Resource, request
 
-from api.services.user import UserService
-
 from api.models.user import RefreshTokenModel, UserModel
+from api.services.user import UserService
 from api.utils.confrimation import NotValidConfrimationException, check_user
-from api.utils.response import (
-    NOT_FOUND,
-    REFRESH_TOKEN_ERROR,
-    FORBIDDEN,
-    get_response,
-)
+from api.utils.response import (FORBIDDEN, NOT_FOUND, REFRESH_TOKEN_ERROR,
+                                get_response)
 
 
 class UserInformation(Resource):

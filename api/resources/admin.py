@@ -1,15 +1,13 @@
+from flask import (Blueprint, abort, flash, redirect, render_template, request,
+                   session)
+from flask_admin import AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import expose, AdminIndexView
+from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash
 
-from api.utils.validation import (
-    validate_email,
-    NotValidDataException,
-)
-from api.models.user import UserModel
 from api.models.message import MessageModel
-from flask import render_template, Blueprint, request, flash, redirect, abort, session
-from flask_login import login_required, current_user, login_user, logout_user
+from api.models.user import UserModel
+from api.utils.validation import NotValidDataException, validate_email
 
 admin_login_view = Blueprint("admin_login_bp", __name__, url_prefix="/mfr-admin")
 

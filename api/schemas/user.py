@@ -1,4 +1,5 @@
 from marshmallow import fields
+
 from api.ma import ma
 from api.models.user import UserModel
 

@@ -1,4 +1,4 @@
-from flask_jwt_extended import create_refresh_token, create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 
 def create_username_access_token(user):

@@ -1,7 +1,9 @@
+from sqlite3 import IntegrityError
+
 import click
 from flask.cli import with_appcontext
 from pymysql import IntegrityError
-from sqlite3 import IntegrityError
+
 from api.models.user import UserModel
 
 

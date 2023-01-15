@@ -1,36 +1,26 @@
-from flask import Flask
-from flask_cors import CORS
+import os
+
 from dotenv import load_dotenv
+from flask import Flask
 from flask_admin import Admin
-from flask_login import LoginManager
-from flask_restful import Api
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_login import LoginManager
+from flask_mail import Mail
 from flask_migrate import Migrate
+from flask_restful import Api
 
 from api.resources.admin import admin_login_view
 from cli import create_admin_user
-from .models.user import UserModel, MessageModel
-from .resources.deploy import DeployServer
-from .resources.user import (
-    UserLogin,
-    UserRegister,
-    UserWithdraw,
-    RefreshToken,
-    UserConfirm,
-    UserInformation,
-)
-from .resources.message import MessageList, MessageDetail
-from .resources.admin import (
-    UserAdminView,
-    MessageAdminView,
-    HomeAdminView,
-)
 
-from flask_mail import Mail
 from .db import db
 from .ma import ma
-
-import os
+from .models.user import MessageModel, UserModel
+from .resources.admin import HomeAdminView, MessageAdminView, UserAdminView
+from .resources.deploy import DeployServer
+from .resources.message import MessageDetail, MessageList
+from .resources.user import (RefreshToken, UserConfirm, UserInformation,
+                             UserLogin, UserRegister, UserWithdraw)
 
 
 def create_app(is_production=True):

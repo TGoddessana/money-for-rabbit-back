@@ -1,25 +1,16 @@
-from api.schemas.user import (
-    UserInformationSchema,
-    UserRegisterSchema,
-    UserLoginSchema,
-    UserWithdrawSchema,
-)
-from api.utils.auth import create_username_access_token, create_userid_refresh_token
-from api.utils.response import (
-    get_response,
-    EMAIL_NOT_CONFIRMED,
-    ACCOUNT_INFORMATION_NOT_MATCH,
-)
-from api.utils.response import EMAIL_DUPLICATED, WELCOME_NEWBIE
-from api.utils.validation import (
-    validate_password,
-    validate_email,
-    NotValidDataException,
-)
-from api.models.user import UserModel, RefreshTokenModel
-from werkzeug.security import generate_password_hash, check_password_hash
-
 from flask_jwt_extended import create_access_token, create_refresh_token
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from api.models.user import RefreshTokenModel, UserModel
+from api.schemas.user import (UserInformationSchema, UserLoginSchema,
+                              UserRegisterSchema, UserWithdrawSchema)
+from api.utils.auth import (create_userid_refresh_token,
+                            create_username_access_token)
+from api.utils.response import (ACCOUNT_INFORMATION_NOT_MATCH,
+                                EMAIL_DUPLICATED, EMAIL_NOT_CONFIRMED,
+                                WELCOME_NEWBIE, get_response)
+from api.utils.validation import (NotValidDataException, validate_email,
+                                  validate_password)
 
 
 class UserService:
