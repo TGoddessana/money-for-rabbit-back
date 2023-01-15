@@ -114,7 +114,7 @@
 {% block title %}MFR Admin page{% endblock %}
 
 {% block access_control %}
-<span class="pumping" id="logout" data-text="logout"></span>
+<a href="{{ url_for('admin_login_bp.admin_logout') }}" class="pumping" id="logout" data-text="logout"></a>
 {% endblock %}
 
 {% block tail %}
@@ -154,7 +154,6 @@
       this.draw()
 
       const timer = setTimeout(() => {
-        this.parent.removeChild(this.children)
         clearTimeout(timer)
       }, this.duration)
       }
@@ -186,7 +185,6 @@
     if (intervalTimer) {
       clearInterval(intervalTimer)
       intervalTimer = null
-      parent.classList.remove('pumping')
     }
     animateParticles({ total: 40 })
   })
