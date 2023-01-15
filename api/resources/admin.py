@@ -1,10 +1,60 @@
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import expose, AdminIndexView
+from werkzeug.security import check_password_hash
+
+from api.utils.validation import (
+    validate_email,
+    NotValidDataException,
+)
 from api.models.user import UserModel
 from api.models.message import MessageModel
+from flask import render_template, Blueprint, request, flash, redirect, abort, session
+from flask_login import login_required, current_user, login_user, logout_user
+
+admin_login_view = Blueprint("admin_login_bp", __name__, url_prefix="/mfr-admin")
 
 
-class HomeAdminView(AdminIndexView):
+@admin_login_view.route("/login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        try:
+            validate_email(email)
+        except NotValidDataException as e:
+            flash(str(e), category="error")
+        user = UserModel.find_by_email(email)
+        if user and check_password_hash(user.password, password):
+            if user.is_admin:  # 사용자가 admin 이면 로그인
+                session.permanent = True
+                login_user(user)
+                return redirect("/mfr-admin/")
+            else:  # 아니면
+                flash("관리자 권한이 없습니다.", category="error")
+                return abort(403)
+        flash("이메일과 비밀번호를 확인하세요.", category="error")
+        return redirect("/mfr-admin/login")
+    elif request.method == "GET":
+        return render_template("admin-login.html")
+
+
+@admin_login_view.route("/logout")
+@login_required
+def admin_logout():
+    logout_user()
+    return redirect("/mfr-admin/login")
+
+
+class AdminPermissionMixin:
+    def is_accessible(self):
+        return current_user.is_admin
+
+
+class HomeAdminView(AdminPermissionMixin, AdminIndexView):
+    @login_required
+    def is_accessible(self):
+        return super().is_accessible()
+
     def is_visible(self):
         return True
 
@@ -13,20 +63,28 @@ class HomeAdminView(AdminIndexView):
         user_count = len(UserModel.query.all())
         message_count = len(MessageModel.find_all())
         return self.render(
-            "admin-home.html",
+            "admin-indexview.html",
             user_count=user_count,
             message_count=message_count,
         )
 
 
-class UserAdminView(ModelView):
+class UserAdminView(AdminPermissionMixin, ModelView):
+    @login_required
+    def is_accessible(self):
+        return super().is_accessible()
+
     can_create = False
     column_filters = ["is_active"]
     column_searchable_list = ["username", "email", "id"]
-    column_list = ["id", "username", "email", "is_active"]
+    column_list = ["id", "username", "email", "is_active", "is_admin"]
 
 
-class MessageAdminView(ModelView):
+class MessageAdminView(AdminPermissionMixin, ModelView):
+    @login_required
+    def is_accessible(self):
+        return super().is_accessible()
+
     can_create = False
     column_filters = ["is_moneybag"]
     column_searchable_list = ["message", "amount", "id"]

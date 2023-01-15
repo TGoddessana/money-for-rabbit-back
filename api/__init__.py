@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
-
+from api.resources.admin import admin_login_view
 from cli import create_admin_user
 from .models.user import UserModel, MessageModel
 from .resources.deploy import DeployServer
@@ -24,7 +24,6 @@ from .resources.admin import (
     UserAdminView,
     MessageAdminView,
     HomeAdminView,
-    AdminLoginView,
 )
 
 from flask_mail import Mail
@@ -44,6 +43,7 @@ def create_app(is_production=True):
         config = os.getenv("APPLICATION_SETTINGS_TEST")
     app.config.from_object(config)
 
+    # Command line interface
     app.cli.add_command(create_admin_user)
 
     login_manager = LoginManager()
@@ -54,7 +54,7 @@ def create_app(is_production=True):
     admin = Admin(
         app,
         url="/mfr-admin/",
-        base_template="admin-base.html",
+        base_template="admin-modelview.html",
         name="money for rabbit",
         template_mode="bootstrap3",
         index_view=HomeAdminView(url="/mfr-admin/"),
@@ -71,14 +71,14 @@ def create_app(is_production=True):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return UserModel.get(user_id)
+        return UserModel.find_by_id(user_id)
 
     # ADMIN Page
     admin.add_view(UserAdminView(model=UserModel, session=db.session, name="Users"))
     admin.add_view(
         MessageAdminView(model=MessageModel, session=db.session, name="Messages")
     )
-    api.add_resource(AdminLoginView, "/mfr-admin/login")
+    app.register_blueprint(admin_login_view)
 
     # 유저 관련 API
     api.add_resource(UserRegister, "/api/user/register")
