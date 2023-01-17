@@ -2,6 +2,9 @@ from api.config.default import *
 
 DEBUG = False
 
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=15)
+JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=1)
+
 DB_USERNAME = os.getenv("DB_USERNAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_DBNAME = os.getenv("DB_DBNAME")
