@@ -15,8 +15,8 @@ SECRET_KEY = os.environ["APP_SECRET_KEY"]
 JWT_BLACKLIST_ENABLED = True
 JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"]
 JSON_AS_ASCII = False
-JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=3)
-JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=3)
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=15)
+JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=1)
 RESTFUL_JSON = dict(ensure_ascii=False)
 FLASK_ADMIN_SWATCH = "journal"
 PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
