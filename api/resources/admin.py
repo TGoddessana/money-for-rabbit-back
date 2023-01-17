@@ -1,5 +1,4 @@
-from flask import (Blueprint, abort, flash, redirect, render_template, request,
-                   session)
+from flask import Blueprint, abort, flash, redirect, render_template, request, session
 from flask_admin import AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_user, logout_user
@@ -73,9 +72,9 @@ class UserAdminView(AdminPermissionMixin, ModelView):
         return super().is_accessible()
 
     can_create = False
-    column_filters = ["is_active"]
+    column_filters = ["email_confirmed"]
     column_searchable_list = ["username", "email", "id"]
-    column_list = ["id", "username", "email", "is_active", "is_admin"]
+    column_list = ["id", "username", "email", "email_confirmed", "is_admin"]
 
 
 class MessageAdminView(AdminPermissionMixin, ModelView):

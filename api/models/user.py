@@ -24,7 +24,7 @@ class UserModel(db.Model, UserMixin):
         lazy="dynamic",
         foreign_keys=MessageModel.user_id,
     )
-    is_active = db.Column(db.Boolean, default=False)
+    email_confirmed = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
 
     def create_user(self):

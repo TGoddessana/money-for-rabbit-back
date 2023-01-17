@@ -18,7 +18,7 @@ class UserInformationSchema(ma.SQLAlchemyAutoSchema):
             "id",
             "email",
             "password",
-            "is_active",
+            "email_confirmed",
             "date_joined",
             "is_admin",
         ]
@@ -48,7 +48,7 @@ class UserWithdrawSchema(ma.SQLAlchemyAutoSchema):
             "id",
             "email",
             "password",
-            "is_active",
+            "email_confirmed",
             "date_joined",
         ]
 
@@ -61,6 +61,6 @@ class UserLoginSchema(ma.SQLAlchemyAutoSchema):
         exclude = [
             "id",
             "username",
-            "is_active",
+            "email_confirmed",
             "date_joined",
         ]

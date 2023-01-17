@@ -18,11 +18,14 @@ class MyPageTest(CommonTestCaseSetting):
                 username="미미",
                 password="1234",
                 email="meme@naver.com",
-                is_active=True,
+                email_confirmed=True,
             ).save_to_db()
             # 테스트를 위한 사용자 "미미" 생성, id = 1
             UserModel(
-                username="민수", password="1234", email="minsu@naver.com", is_active=True
+                username="민수",
+                password="1234",
+                email="minsu@naver.com",
+                email_confirmed=True,
             ).save_to_db()
             # 테스트를 위한 사용자 "민수" 생성, id = 2
 
@@ -99,11 +102,14 @@ class WithdrawTest(CommonTestCaseSetting):
                 username="미미",
                 password="1234",
                 email="meme@naver.com",
-                is_active=True,
+                email_confirmed=True,
             ).save_to_db()
             # 테스트를 위한 사용자 "미미" 생성, id = 1
             UserModel(
-                username="민수", password="1234", email="minsu@naver.com", is_active=True
+                username="민수",
+                password="1234",
+                email="minsu@naver.com",
+                email_confirmed=True,
             ).save_to_db()
             # 테스트를 위한 사용자 "민수" 생성, id = 2
 
@@ -201,7 +207,7 @@ class RegisterTest(CommonTestCaseSetting):
         """
         정상적인 데이터와 함께 회원가입이 진행되었다면,
         서버는 사용자에게 확인 이메일을 보내고
-        is_active 필드가 False 인 채로 저장해야 합니다.
+        email_confirmed 필드가 False 인 채로 저장해야 합니다.
         201 상태 코드와 적절한 성공 메시지를 응답해야 합니다.
         """
         with self.client.application.app_context():
@@ -233,11 +239,14 @@ class LoginTest(CommonTestCaseSetting):
                 username="미미",
                 password="1234",
                 email="meme@naver.com",
-                is_active=True,
+                email_confirmed=True,
             ).create_user()
             # 테스트를 위한 사용자 "미미" 생성, id = 1
             UserModel(
-                username="민수", password="1234", email="minsu@naver.com", is_active=True
+                username="민수",
+                password="1234",
+                email="minsu@naver.com",
+                email_confirmed=True,
             ).create_user()
             # 테스트를 위한 사용자 "민수" 생성, id = 2
 
