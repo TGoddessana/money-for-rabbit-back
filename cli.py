@@ -19,7 +19,7 @@ def create_admin_user():
             username=username,
             email=email,
             password=password,
-            is_active=True,
+            email_confirmed=True,
             is_admin=True,
         ).create_user()
     except IntegrityError:
