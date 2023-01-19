@@ -1,16 +1,25 @@
-from flask_jwt_extended import create_access_token, create_refresh_token
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.models.user import RefreshTokenModel, UserModel
-from api.schemas.user import (UserInformationSchema, UserLoginSchema,
-                              UserRegisterSchema, UserWithdrawSchema)
-from api.utils.auth import (create_userid_refresh_token,
-                            create_username_access_token)
-from api.utils.response import (ACCOUNT_INFORMATION_NOT_MATCH,
-                                EMAIL_DUPLICATED, EMAIL_NOT_CONFIRMED,
-                                WELCOME_NEWBIE, get_response)
-from api.utils.validation import (NotValidDataException, validate_email,
-                                  validate_password)
+from api.schemas.user import (
+    UserInformationSchema,
+    UserLoginSchema,
+    UserRegisterSchema,
+    UserWithdrawSchema,
+)
+from api.utils.auth import create_userid_refresh_token, create_username_access_token
+from api.utils.response import (
+    ACCOUNT_INFORMATION_NOT_MATCH,
+    EMAIL_DUPLICATED,
+    EMAIL_NOT_CONFIRMED,
+    WELCOME_NEWBIE,
+    get_response,
+)
+from api.utils.validation import (
+    NotValidDataException,
+    validate_email,
+    validate_password,
+)
 
 
 class UserService:
@@ -79,7 +88,7 @@ class UserService:
             return get_response(False, validate_result, 400)
         if not check_password_hash(self.user.password, data["password"]):
             return get_response(False, ACCOUNT_INFORMATION_NOT_MATCH, 401)
-        if not self.user.is_active:
+        if not self.user.email_confirmed:
             return get_response(False, EMAIL_NOT_CONFIRMED, 400)
         new_access_token = create_username_access_token(self.user)
         new_refresh_token = create_userid_refresh_token(self.user)
