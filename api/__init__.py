@@ -21,13 +21,29 @@ from .models.user import MessageModel, UserModel
 from .resources.admin import HomeAdminView, MessageAdminView, UserAdminView
 from .resources.deploy import DeployServer
 from .resources.message import MessageDetail, MessageList
-from .resources.user import (RefreshToken, UserConfirm, UserInformation,
-                             UserLogin, UserRegister, UserWithdraw)
+from .resources.user import (
+    RefreshToken,
+    UserConfirm,
+    UserInformation,
+    UserLogin,
+    UserRegister,
+    UserWithdraw,
+)
 
 
 def create_app(is_production=True):
     app = Flask(__name__)
-    CORS(app, resources={r"*": {"origins": "*"}})
+    CORS(
+        app,
+        resources={
+            r"*": {
+                "origins": [
+                    "https://money-for-rabbit.netlify.app/",
+                    "http://localhost:3000",
+                ]
+            }
+        },
+    )
     load_dotenv(".env", verbose=True)
     if is_production:
         config = os.getenv("APPLICATION_SETTINGS_PROD")
