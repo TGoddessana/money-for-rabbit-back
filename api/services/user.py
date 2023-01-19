@@ -19,6 +19,7 @@ from api.utils.validation import (
     NotValidDataException,
     validate_email,
     validate_password,
+    validate_username,
 )
 
 
@@ -55,6 +56,10 @@ class UserService:
             return get_response(False, str(e), 400)
         try:
             validate_email(data.get("email"))
+        except NotValidDataException as e:
+            return get_response(False, str(e), 400)
+        try:
+            validate_username(data.get("username"))
         except NotValidDataException as e:
             return get_response(False, str(e), 400)
         if UserModel.find_by_email(data["email"]):

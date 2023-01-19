@@ -1,5 +1,4 @@
 import re
-import string
 
 
 class NotValidDataException(Exception):
@@ -8,6 +7,17 @@ class NotValidDataException(Exception):
             super().__init__(f"유효한 {type} 값이 아닙니다. {additional_message}")
         else:
             super().__init__(f"유효한 {type} 값이 아닙니다.")
+
+
+def validate_username(username):
+    regex = re.compile(r"^[a-zA-Z가-힣\d]{2,12}$")
+    if re.search(regex, username):
+        pass
+    else:
+        raise NotValidDataException(
+            type="닉네임",
+            additional_message="2 ~ 8자, 특수 문자와 초성, 공백은 포함될 수 없습니다.",
+        )
 
 
 def validate_password(password):
