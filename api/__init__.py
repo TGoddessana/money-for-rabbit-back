@@ -35,6 +35,7 @@ def create_app(is_production=True):
     app = Flask(__name__)
     CORS(
         app,
+        supports_credentials=True,
         resources={
             r"*": {
                 "origins": [
@@ -109,8 +110,8 @@ def create_app(is_production=True):
 
     from api.utils.final_mail import send_final_mail
 
-    schedule = BackgroundScheduler(daemon=True, timezone="Asia/Seoul")
-    schedule.add_job(send_final_mail, "date", run_date=datetime(2023, 1, 20))
-    schedule.start()
+    # schedule = BackgroundScheduler(daemon=True, timezone="Asia/Seoul")
+    # schedule.add_job(send_final_mail, "date", run_date=datetime(2023, 1, 22))
+    # schedule.start()
 
     return app
