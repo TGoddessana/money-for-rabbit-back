@@ -5,7 +5,7 @@
 - 쪽지 상세 조회
 - 쪽지 생성
 """
-from api import UserModel, MessageModel
+from api import MessageModel, UserModel
 from api.tests import CommonTestCaseSetting
 
 

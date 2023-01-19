@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from flask import Flask
@@ -20,14 +21,8 @@ from .models.user import MessageModel, UserModel
 from .resources.admin import HomeAdminView, MessageAdminView, UserAdminView
 from .resources.deploy import DeployServer
 from .resources.message import MessageDetail, MessageList
-from .resources.user import (
-    RefreshToken,
-    UserConfirm,
-    UserInformation,
-    UserLogin,
-    UserRegister,
-    UserWithdraw,
-)
+from .resources.user import (RefreshToken, UserConfirm, UserInformation,
+                             UserLogin, UserRegister, UserWithdraw)
 
 
 def create_app(is_production=True):

@@ -1,5 +1,5 @@
 from flask import current_app, render_template
-from flask_mail import Message, Mail
+from flask_mail import Mail, Message
 
 from api.models.message import MessageModel
 from api.models.user import UserModel

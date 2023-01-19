@@ -1,26 +1,15 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from api.models.user import RefreshTokenModel, UserModel
-from api.schemas.user import (
-    UserInformationSchema,
-    UserLoginSchema,
-    UserRegisterSchema,
-    UserWithdrawSchema,
-)
-from api.utils.auth import create_userid_refresh_token, create_username_access_token
-from api.utils.response import (
-    ACCOUNT_INFORMATION_NOT_MATCH,
-    EMAIL_DUPLICATED,
-    EMAIL_NOT_CONFIRMED,
-    WELCOME_NEWBIE,
-    get_response,
-)
-from api.utils.validation import (
-    NotValidDataException,
-    validate_email,
-    validate_password,
-    validate_username,
-)
+from api.schemas.user import (UserInformationSchema, UserLoginSchema,
+                              UserRegisterSchema, UserWithdrawSchema)
+from api.utils.auth import (create_userid_refresh_token,
+                            create_username_access_token)
+from api.utils.response import (ACCOUNT_INFORMATION_NOT_MATCH,
+                                EMAIL_DUPLICATED, EMAIL_NOT_CONFIRMED,
+                                WELCOME_NEWBIE, get_response)
+from api.utils.validation import (NotValidDataException, validate_email,
+                                  validate_password, validate_username)
 
 
 class UserService:

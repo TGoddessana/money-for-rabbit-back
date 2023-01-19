@@ -1,11 +1,11 @@
 from flask import request
 from flask_jwt_extended import get_jwt_identity
 
-from api import UserModel, MessageModel
-from api.utils.korean_datetime import get_korean_datetime, MESSAGE_OPEN_DATETIME
-from api.utils.response import get_response, NOT_FOUND, INTERNAL_SERVER_ERROR
-
+from api import MessageModel, UserModel
 from api.schemas.message import MessageSchema
+from api.utils.korean_datetime import (MESSAGE_OPEN_DATETIME,
+                                       get_korean_datetime)
+from api.utils.response import INTERNAL_SERVER_ERROR, NOT_FOUND, get_response
 
 
 class MessageService:

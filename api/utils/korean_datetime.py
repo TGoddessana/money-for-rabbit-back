@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import pytz
 
 MESSAGE_OPEN_DATETIME = datetime(2023, 1, 22, tzinfo=pytz.timezone("Asia/Seoul"))
