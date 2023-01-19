@@ -16,7 +16,7 @@ def validate_username(username):
     else:
         raise NotValidDataException(
             type="닉네임",
-            additional_message="2 ~ 8자, 특수 문자와 초성, 공백은 포함될 수 없습니다.",
+            additional_message="2 ~ 12자, 특수 문자와 초성, 공백은 포함될 수 없습니다.",
         )
 
 
