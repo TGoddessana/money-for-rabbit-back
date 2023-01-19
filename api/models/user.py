@@ -40,7 +40,7 @@ class UserModel(db.Model, UserMixin):
         )
         hashed_email = hashlib.sha256(self.email.encode()).hexdigest()
         msg.html = render_template(
-            "email-template.html",
+            "email-confirmation-template.html",
             hashed_email=hashed_email,
             user_id=self.id,
         )
