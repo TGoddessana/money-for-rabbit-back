@@ -1,5 +1,6 @@
 import os
-
+from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from flask import Flask
 from flask_admin import Admin
@@ -19,8 +20,14 @@ from .models.user import MessageModel, UserModel
 from .resources.admin import HomeAdminView, MessageAdminView, UserAdminView
 from .resources.deploy import DeployServer
 from .resources.message import MessageDetail, MessageList
-from .resources.user import (RefreshToken, UserConfirm, UserInformation,
-                             UserLogin, UserRegister, UserWithdraw)
+from .resources.user import (
+    RefreshToken,
+    UserConfirm,
+    UserInformation,
+    UserLogin,
+    UserRegister,
+    UserWithdraw,
+)
 
 
 def create_app(is_production=True):
@@ -55,10 +62,12 @@ def create_app(is_production=True):
     ma.init_app(app)
     migrate.init_app(app, db)
 
+    # DB 생성
     with app.app_context():
         db.create_all()
         from api.resources import error
 
+    # Flask-Login
     @login_manager.user_loader
     def load_user(user_id):
         return UserModel.find_by_id(user_id)
@@ -86,5 +95,11 @@ def create_app(is_production=True):
 
     # 배포 web hook 을 위한 엔드포인트
     api.add_resource(DeployServer, "/update-server")
+
+    from api.utils.final_mail import send_final_mail
+
+    schedule = BackgroundScheduler(daemon=True, timezone="Asia/Seoul")
+    schedule.add_job(send_final_mail, "date", run_date=datetime(2023, 1, 20))
+    schedule.start()
 
     return app
