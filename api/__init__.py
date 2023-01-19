@@ -40,8 +40,8 @@ def create_app(is_production=True):
         resources={
             r"*": {
                 "origins": [
-                    "https://money-for-rabbit.netlify.app/",
-                    "http://localhost:3000",
+                    "https://money-for-rabbit.netlify.app",
+                    # "http://localhost:3000",
                 ]
             }
         },
