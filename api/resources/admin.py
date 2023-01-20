@@ -138,30 +138,30 @@ class UserAdminView(AdminPermissionMixin, ModelView):
     column_list = ["id", "username", "email", "email_confirmed", "is_admin"]
 
 
-class MessageAdminView(AdminPermissionMixin, ModelView):
-    @login_required
-    def is_accessible(self):
-        return super().is_accessible()
-
-    can_create = False
-    column_filters = ["is_moneybag"]
-    column_searchable_list = ["message", "amount", "id"]
-    column_list = [
-        "id",
-        "message",
-        "amount",
-        "is_moneybag",
-        "from",
-        "to",
-    ]
-
-    def get_author_email(view, context, model, name):
-        return model.author.email if model.user else None
-
-    def get_reciepient_email(view, context, model, name):
-        return model.user.email if model.user else None
-
-    column_formatters = {
-        "from": get_author_email,
-        "to": get_reciepient_email,
-    }
+# class MessageAdminView(AdminPermissionMixin, ModelView):
+#     @login_required
+#     def is_accessible(self):
+#         return super().is_accessible()
+#
+#     can_create = False
+#     column_filters = ["is_moneybag"]
+#     column_searchable_list = ["message", "amount", "id"]
+#     column_list = [
+#         "id",
+#         "message",
+#         "amount",
+#         "is_moneybag",
+#         "from",
+#         "to",
+#     ]
+#
+#     def get_author_email(view, context, model, name):
+#         return model.author.email if model.user else None
+#
+#     def get_reciepient_email(view, context, model, name):
+#         return model.user.email if model.user else None
+#
+#     column_formatters = {
+#         "from": get_author_email,
+#         "to": get_reciepient_email,
+#     }
