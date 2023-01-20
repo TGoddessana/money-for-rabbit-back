@@ -15,6 +15,15 @@
     h3 {
         font-family: 'Jua'
     }
+
+
+    #mail{
+    position: absolute;
+    left: 80%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    }
+
     #logout {
     position: absolute;
     left: 95%;
@@ -115,6 +124,7 @@
 
 {% block access_control %}
 <a href="{{ url_for('admin_login_bp.admin_logout') }}" class="pumping" id="logout" data-text="logout"></a>
+<a href="" id="mail">쪽지확인 메일 보내기</a>
 {% endblock %}
 
 {% block tail %}
