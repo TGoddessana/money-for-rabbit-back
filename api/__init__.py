@@ -84,9 +84,9 @@ def create_app(is_production=True):
 
     # ADMIN Page
     admin.add_view(UserAdminView(model=UserModel, session=db.session, name="Users"))
-    admin.add_view(
-        MessageAdminView(model=MessageModel, session=db.session, name="Messages")
-    )
+    # admin.add_view(
+    #     MessageAdminView(model=MessageModel, session=db.session, name="Messages")
+    # )
     app.register_blueprint(admin_extra_view)
 
     # 유저 관련 API
@@ -107,3 +107,6 @@ def create_app(is_production=True):
     # api.add_resource(DeployServer, "/update-server")
 
     return app
+
+
+정
