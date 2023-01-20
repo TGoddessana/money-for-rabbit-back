@@ -1,0 +1,12 @@
+{% extends 'admin-base.html' %}
+
+{% block page_body %}
+{{super()}}
+<div style="text-align: center;">
+    <div class="server-info">
+        <h1>🐰 Money For Rabbt 서비스 관리자 페이지 🐰</h1>
+        <h3>* 현재 {{ user_count }} 명의 사용자가 Money For Rabbit 서비스를 이용 중입니다.</h3>
+        <h3>* 현재까지 {{ message_count }} 개의 마음이 Money For Rabbit 서비스를 통해 전달되었습니다.</h3>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>메일 발송 결과</title>
+</head>
+<body>
+<h3>다음의 사용자들에게는 "쪽지 확인" 메일을 보냈습니다.</h3>
+{% for user in users_received %}
+    {{ user }}
+{% endfor %}
+<h3>다음의 사용자들에게는 "SNS 공유" 메일을 보냈습니다.</h3>
+{% for user in users_not_received %}
+    {{ user }}
+{% endfor %}
+</body>
+</html>
