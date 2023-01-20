@@ -104,6 +104,6 @@ def create_app(is_production=True):
     api.add_resource(MessageDetail, "/api/user/<int:user_id>/messages/<int:message_id>")
 
     # 배포 web hook 을 위한 엔드포인트
-    api.add_resource(DeployServer, "/update-server")
+    # api.add_resource(DeployServer, "/update-server")
 
     return app
