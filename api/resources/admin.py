@@ -1,18 +1,27 @@
-from flask import (Blueprint, abort, flash, redirect, render_template, request,
-                   session)
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    session,
+    current_app,
+)
 from flask_admin import AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_user, logout_user
+from flask_mail import Message, Mail
 from werkzeug.security import check_password_hash
 
 from api.models.message import MessageModel
 from api.models.user import UserModel
 from api.utils.validation import NotValidDataException, validate_email
 
-admin_login_view = Blueprint("admin_login_bp", __name__, url_prefix="/mfr-admin")
+admin_extra_view = Blueprint("admin_extra_view_bp", __name__, url_prefix="/mfr-admin")
 
 
-@admin_login_view.route("/login", methods=["GET", "POST"])
+@admin_extra_view.route("/login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "POST":
         email = request.form.get("email")
@@ -36,11 +45,62 @@ def admin_login():
         return render_template("admin-login.html")
 
 
-@admin_login_view.route("/logout")
+@admin_extra_view.route("/logout")
 @login_required
 def admin_logout():
     logout_user()
     return redirect("/mfr-admin/login")
+
+
+@admin_extra_view.route("/send-alert-mail")
+@login_required
+def send_alert_mail():
+    """
+    회원가입한 모든 사용자에 대해서,
+    1. 쪽지를 받은 사람 : 몇 명에게, 얼마를 받았는지
+    2. 쪽지를 안 받은 사람 : 템플릿 그대로 뿌려줌
+    """
+    assert current_user.is_admin
+    users_not_received = []
+    users_received = []
+    for user in UserModel.query.all():
+        if user.message_set.all():
+            users_received.append(user.email)
+            author_count = len(
+                set([message.author_id for message in user.message_set.all()])
+            )
+            total_amount = user.total_amount
+            msg = Message(
+                f"[Money For Rabbit] {user.username}님, 쪽지를 확인해 보세요!",
+                sender="moneyforrabbit@5nonymous.tk",
+                recipients=[user.email],
+            )
+            msg.html = render_template(
+                "received-alert-template.html",
+                author_count=author_count,
+                total_amount=user.total_amount,
+            )
+            with current_app.app_context():
+                mail = Mail()
+                mail.send(msg)
+        else:
+            users_not_received.append(user.email)
+            msg = Message(
+                f"[Money For Rabbit] {user.username}님, 쪽지 링크를 공유해 보세요!",
+                sender="moneyforrabbit@5nonymous.tk",
+                recipients=[user.email],
+            )
+            msg.html = render_template(
+                "no-received-alert-template.html",
+            )
+            with current_app.app_context():
+                mail = Mail()
+                mail.send(msg)
+    return render_template(
+        "email-send-result.html",
+        users_received=users_received,
+        users_not_received=users_not_received,
+    )
 
 
 class AdminPermissionMixin:
