@@ -16,7 +16,7 @@ from cli import create_admin_user
 from .db import db
 from .ma import ma
 from .models.user import MessageModel, UserModel
-from .resources.admin import HomeAdminView, MessageAdminView, UserAdminView
+from .resources.admin import HomeAdminView, UserAdminView
 from .resources.deploy import DeployServer
 from .resources.message import MessageDetail, MessageList
 from .resources.user import (
