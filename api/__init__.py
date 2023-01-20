@@ -107,6 +107,3 @@ def create_app(is_production=True):
     # api.add_resource(DeployServer, "/update-server")
 
     return app
-
-
-정
