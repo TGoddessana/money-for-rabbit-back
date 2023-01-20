@@ -1,8 +1,5 @@
 import os
-from datetime import datetime
 
-#
-# from apscheduler.schedulers.background import BackgroundScheduler
 from dotenv import load_dotenv
 from flask import Flask
 from flask_admin import Admin
@@ -108,11 +105,5 @@ def create_app(is_production=True):
 
     # 배포 web hook 을 위한 엔드포인트
     api.add_resource(DeployServer, "/update-server")
-
-    # from api.utils.final_mail import send_final_mail
-
-    # schedule = BackgroundScheduler(daemon=True, timezone="Asia/Seoul")
-    # schedule.add_job(send_final_mail, "date", run_date=datetime(2023, 1, 22))
-    # schedule.start()
 
     return app
