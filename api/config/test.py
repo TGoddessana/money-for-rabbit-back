@@ -1,6 +1,6 @@
 from api.config.default import *
 
-TESTING = True
+TESTING = False
 
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
