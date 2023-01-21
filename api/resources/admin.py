@@ -65,39 +65,33 @@ def send_alert_mail():
     users_received = []
     for user in UserModel.query.all():
         if user.message_set.all():
-            users_received.append(user.email)
-            print(users_received)
-            # author_count = len(
-            #     set([message.author_id for message in user.message_set.all()])
-            # )
-            # total_amount = user.total_amount
-            # msg = Message(
-            #     f"[Money For Rabbit] {user.username}님, 쪽지를 확인해 보세요!",
-            #     sender="moneyforrabbit@5nonymous.tk",
-            #     recipients=[user.email],
-            # )
-            # msg.html = render_template(
-            #     "received-alert-template.html",
-            #     author_count=author_count,
-            #     total_amount=user.total_amount,
-            # )
-            # with current_app.app_context():
-            #     mail = Mail()
-            #     mail.send(msg)
+            users_received.append(user)
         else:
-            users_not_received.append(user.email)
-            print(users_not_received)
-            # msg = Message(
-            #     f"[Money For Rabbit] {user.username}님, 쪽지 링크를 공유해 보세요!",
-            #     sender="moneyforrabbit@5nonymous.tk",
-            #     recipients=[user.email],
-            # )
-            # msg.html = render_template(
-            #     "no-received-alert-template.html",
-            # )
-            # with current_app.app_context():
-            #     mail = Mail()
-            #     mail.send(msg)
+            users_not_received.append(user)
+    for user in users_received:
+        msg = Message(
+            f"[Money For Rabbit] {user.username}님, 쪽지를 확인해 보세요!",
+            sender="moneyforrabbit@5nonymous.tk",
+            recipients=[user.email],
+        )
+        msg.html = render_template(
+            "received-alert-template.html",
+        )
+        with current_app.app_context():
+            mail = Mail()
+            mail.send(msg)
+    for user in users_not_received:
+        msg = Message(
+            f"[Money For Rabbit] {user.username}님, 쪽지 링크를 공유해 보세요!",
+            sender="moneyforrabbit@5nonymous.tk",
+            recipients=[user.email],
+        )
+        msg.html = render_template(
+            "no-received-alert-template.html",
+        )
+        with current_app.app_context():
+            mail = Mail()
+            mail.send(msg)
     return render_template(
         "email-send-result.html",
         users_received=users_received,
@@ -140,30 +134,30 @@ class UserAdminView(AdminPermissionMixin, ModelView):
     column_list = ["id", "username", "email", "email_confirmed", "is_admin"]
 
 
-# class MessageAdminView(AdminPermissionMixin, ModelView):
-#     @login_required
-#     def is_accessible(self):
-#         return super().is_accessible()
-#
-#     can_create = False
-#     column_filters = ["is_moneybag"]
-#     column_searchable_list = ["message", "amount", "id"]
-#     column_list = [
-#         "id",
-#         "message",
-#         "amount",
-#         "is_moneybag",
-#         "from",
-#         "to",
-#     ]
-#
-#     def get_author_email(view, context, model, name):
-#         return model.author.email if model.user else None
-#
-#     def get_reciepient_email(view, context, model, name):
-#         return model.user.email if model.user else None
-#
-#     column_formatters = {
-#         "from": get_author_email,
-#         "to": get_reciepient_email,
-#     }
+class MessageAdminView(AdminPermissionMixin, ModelView):
+    @login_required
+    def is_accessible(self):
+        return super().is_accessible()
+
+    can_create = False
+    column_filters = ["is_moneybag"]
+    column_searchable_list = ["message", "amount", "id"]
+    column_list = [
+        "id",
+        "message",
+        "amount",
+        "is_moneybag",
+        "from",
+        "to",
+    ]
+
+    def get_author_email(view, context, model, name):
+        return model.author.email if model.user else None
+
+    def get_reciepient_email(view, context, model, name):
+        return model.user.email if model.user else None
+
+    column_formatters = {
+        "from": get_author_email,
+        "to": get_reciepient_email,
+    }

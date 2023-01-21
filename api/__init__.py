@@ -10,7 +10,7 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_restful import Api
 
-from api.resources.admin import admin_extra_view
+from api.resources.admin import admin_extra_view, MessageAdminView
 from cli import create_admin_user
 
 from .db import db
@@ -84,9 +84,9 @@ def create_app(is_production=True):
 
     # ADMIN Page
     admin.add_view(UserAdminView(model=UserModel, session=db.session, name="Users"))
-    # admin.add_view(
-    #     MessageAdminView(model=MessageModel, session=db.session, name="Messages")
-    # )
+    admin.add_view(
+        MessageAdminView(model=MessageModel, session=db.session, name="Messages")
+    )
     app.register_blueprint(admin_extra_view)
 
     # 유저 관련 API
