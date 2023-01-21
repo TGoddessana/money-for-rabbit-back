@@ -66,36 +66,38 @@ def send_alert_mail():
     for user in UserModel.query.all():
         if user.message_set.all():
             users_received.append(user.email)
-            author_count = len(
-                set([message.author_id for message in user.message_set.all()])
-            )
-            total_amount = user.total_amount
-            msg = Message(
-                f"[Money For Rabbit] {user.username}님, 쪽지를 확인해 보세요!",
-                sender="moneyforrabbit@5nonymous.tk",
-                recipients=[user.email],
-            )
-            msg.html = render_template(
-                "received-alert-template.html",
-                author_count=author_count,
-                total_amount=user.total_amount,
-            )
-            with current_app.app_context():
-                mail = Mail()
-                mail.send(msg)
+            print(users_received)
+            # author_count = len(
+            #     set([message.author_id for message in user.message_set.all()])
+            # )
+            # total_amount = user.total_amount
+            # msg = Message(
+            #     f"[Money For Rabbit] {user.username}님, 쪽지를 확인해 보세요!",
+            #     sender="moneyforrabbit@5nonymous.tk",
+            #     recipients=[user.email],
+            # )
+            # msg.html = render_template(
+            #     "received-alert-template.html",
+            #     author_count=author_count,
+            #     total_amount=user.total_amount,
+            # )
+            # with current_app.app_context():
+            #     mail = Mail()
+            #     mail.send(msg)
         else:
             users_not_received.append(user.email)
-            msg = Message(
-                f"[Money For Rabbit] {user.username}님, 쪽지 링크를 공유해 보세요!",
-                sender="moneyforrabbit@5nonymous.tk",
-                recipients=[user.email],
-            )
-            msg.html = render_template(
-                "no-received-alert-template.html",
-            )
-            with current_app.app_context():
-                mail = Mail()
-                mail.send(msg)
+            print(users_not_received)
+            # msg = Message(
+            #     f"[Money For Rabbit] {user.username}님, 쪽지 링크를 공유해 보세요!",
+            #     sender="moneyforrabbit@5nonymous.tk",
+            #     recipients=[user.email],
+            # )
+            # msg.html = render_template(
+            #     "no-received-alert-template.html",
+            # )
+            # with current_app.app_context():
+            #     mail = Mail()
+            #     mail.send(msg)
     return render_template(
         "email-send-result.html",
         users_received=users_received,
